@@ -3,15 +3,16 @@ sidebar: auto
 ---
 
 # Tutorial
+## Hello, World!
 
 ::: tip INFO
 This will be fully implemented in 0.1.x
 Required for full implementation:
-. datatypes
-. functions
-. returns
-. templating
-. variables
+- datatypes
+- functions
+- returns
+- templating
+- variables
 :::
 
 The tutorial is divided into several steps. This is the first step.
@@ -57,10 +58,10 @@ This concludes the first step of the tutorial. Curium should be able to execute 
 This is the second step of our tutorial. Version 0.2.x of Curium will be able to execute this flawlessly, and 0.1.x may be able to execute this, depending on development progress.
 
 Required for full implementation:
-. data types
-. mathematical parsing
-. variables
-. templating
+- data types
+- mathematical parsing
+- variables
+- templating
 :::
 
 
@@ -114,8 +115,8 @@ class TemplateTaker:
 ::: tip INFO
 This section will be implemented in 0.3.x
 Required for full implementation:
-. structs
-. pointers
+- structs
+- pointers
 :::
 
 Most languages have an implementation of data structures. In this section, we will be overviewing a form of static data structures simply called structs.
