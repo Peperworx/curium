@@ -9,10 +9,34 @@ This language will be version using [Semantic Versioning](https://semver.org/) w
 
 ## Why Python??
 
-Python is a very dynamic programming language. We can twist things around, and make things feel the way we want when designing an interface to this language and its subset assembly/bytecode. For example: We can dynamically add new attributes to classes, and list the attributes of classes. We are also not limited on integer and string sizes. 
-This language will be using and abusing typehints. Visual Studio Code, or a similar editor, should be able to give you intellisense (or whatever you are using) information for every step of the way. I will also do my best to comment the code as much as humanly possible.
+Python is great for prototyping software fast. Using Python features like decorators, kerword arguments, dictionaries, the large standard library, and various tools that are available, we can create an easy to use interface that allows users to expand upon the language (For Example: Providing custom standard library modules and builtin functions.)
 
-## Isn't Python Slow?
+### Isn't Python Slow?
 
-Some Python code can be optimized to the point of running almost C-like levels. However, even if we were to optimize our compiler to that point, the speed would still not matter. While the compiler, parser, and frontend will be written in Python, it is really the interpreter that matters. The interpreter will be written in one of two forms: either a C++ shared library that is accessed by the ctypes module, or a C library for Python. Possibly even both. However, the first one (the shared library) is most likely to be developed first, as you could then embed it in other programming languages that support .dll and .so libraries.
+Not really. Using many language features of python (list comprehensions, C libraries, threading, etc) we can optimize code alot. However, python will be used only for the compiler and assembler. The interpreter will be written in C++ and compiled as a dynamic library. This will then be loaded and called from python using ctypes.
+
+
+## Language Details
+
+### How will this language be typed?
+
+This language will be statically typed. Every variable will have a type, but unlike other statically typed languages, variables types can be reassigned. This is possible because every type is at it's core just an array of bytes. Different parts of the array mean different things. Due to the nature of computers, however, this will only be available for the interpreted version. For the compiled version, this will be less efficient, simply creating a new variable and casting the original value to that new variable, as opposed to realocating the original variable. 
+
+## Step 1 Compiler Details
+
+The step 1 compiler is an integral part of this language concept. It converts a parse tree to a custom assembly code which is then assembled into a custom bytecode. This bytecode can then be intepreted or compiled.
+
+## Assembler Details
+
+The assembler will convert the custom assembly code into bytecode. More details on this once I get this 100% working. (I actually have a working demo right now, but it sucks.)
+
+## Interpreter Details
+
+### Memory Management
+
+The interpreter will manage memory with a 100% custom memory allocator. The interpreter will store the program's memory in a custom list/vector of chars. This allows us to be super efficient with our memory use, and reduce overhead from possible "extra features" that build in memory managers provide. All we need is malloc and free. We will go into more details once an interpreter is in progress.
+
+## Step 2 Compiler Details
+
+The step 2 compiler will be super similar to the interpreter. It will interpret the bytecode, but instead of performing actions based on what it sees, it will generate NASM assembly from the program.
 
