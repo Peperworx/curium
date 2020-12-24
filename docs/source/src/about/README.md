@@ -4,15 +4,15 @@ sidebar: auto
 # Introduction
 
 
-Peperworx Lang is a conceptual programming language that will be implemented in Python once a "specification" is complete. This "specification" is in fact this documentation. The language will be designed to complete the documentation, one tutorial step at a time.
+Curium Lang is a conceptual programming language that will be implemented in Python once a "specification" is complete. This "specification" is in fact this documentation. The language will be designed to complete the documentation, one tutorial step at a time.
 
-This language is a C-like language with static typing that can be compiled to multiple targets. The primary target will be a custom assembly language that will assemble into a custom bytecode. This bytecode could then be interpreted or, as I plan to implement in the far future, converted to an ELF executable.
+Curium is a C-like language with static typing that can be compiled to multiple targets. The primary target will be a custom assembly language that will assemble into a custom bytecode. This bytecode could then be interpreted or, as I plan to implement in the far future, converted to an ELF executable.
 
-This language will be version using [Semantic Versioning](https://semver.org/) with a twist. Every tutorial step will be a minor version, and every tutorial section will be a major version.
+Versioning will be using [Semantic Versioning](https://semver.org/) with a twist. Every tutorial step will be a minor version, and every tutorial section will be a major version.
 
 ## Why Python??
 
-Python is great for prototyping software fast. Using Python features like decorators, kerword arguments, dictionaries, the large standard library, and various tools that are available, we can create an easy to use interface that allows users to expand upon the language (For Example: Providing custom standard library modules and builtin functions.)
+Python is great for prototyping software fast. Using Python features like decorators, kerword arguments, dictionaries, the large standard library, and various tools that are available, we can create an easy to use interface that allows users to expand upon Curium (For Example: Providing custom standard library modules and builtin functions.)
 
 ### Isn't Python Slow?
 
@@ -23,7 +23,7 @@ Not really. Using many language features of python (list comprehensions, C libra
 
 ### How will this language be typed?
 
-This language will be statically typed. Every variable will have a type, but unlike other statically typed languages, variables types can be reassigned. This is possible because every type is at it's core just an array of bytes. Different parts of the array mean different things. Due to the nature of computers, however, this will only be available for the interpreted version. For the compiled version, this will be less efficient, simply creating a new variable and casting the original value to that new variable, as opposed to realocating the original variable. 
+Curium will be statically typed. Every variable will have a type, but unlike other statically typed languages, variables types can be reassigned. This is possible because every type is at it's core just an array of bytes. Different parts of the array mean different things. Due to the nature of computers, however, this will only be available for the interpreted version. For the compiled version, this will be less efficient, simply creating a new variable and casting the original value to that new variable, as opposed to realocating the original variable. 
 
 ### Everything is an object/type
 
@@ -50,5 +50,5 @@ The step 2 compiler will be super similar to the interpreter. It will interpret 
 
 ## The Tutorial
 
-As I said, this language will use Documentation Driven Devlopment, as (in my opinion) the best way to plan is to have a thorough understanding of how it the end result will work. This will be accomplished by means of a tutorial. As I said above, each step of a tutorial will be a minor version, and each section a major version. Patch versions are for security and bug fixes only.
+As I said, Curium will use Documentation Driven Devlopment, as (in my opinion) the best way to plan is to have a thorough understanding of how it the end result will work. This will be accomplished by means of a tutorial. As I said above, each step of a tutorial will be a minor version, and each section a major version. Patch versions are for security and bug fixes only.
 You can start the tutorial by going [here](tutorial/).

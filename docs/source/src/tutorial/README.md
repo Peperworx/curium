@@ -27,7 +27,7 @@ function[int]: main(){
 }
 ```
 
-For our language, you can just use C++ language highlighting.
+For Curium, you can just use C++ language highlighting.
 
 Lets examine the code snippet above:
 
@@ -47,14 +47,14 @@ Functions are called the same as in most other C-like languages:
 function_name(arg1,arg2,arg3,...);
 ```
 
-Second major thing to notice is the print function. C has the printf, C++ has cout, and out language has print. This print function behaves like the python print function, except it does not automatically append a newline.
+Second major thing to notice is the print function. C has the printf, C++ has cout, and Curium has print. This print function behaves like the python print function, except it does not automatically append a newline.
 
-This concludes the first step of the tutorial. Our language should be able to execute this code at version 0.1.x
+This concludes the first step of the tutorial. Curium should be able to execute this code at version 0.1.x
 
 ## Variables
 
 ::: tip INFO
-This is the second step of our tutorial. Version 0.2.x of our language will be able to execute this flawlessly, and 0.1.x may be able to execute this, depending on development progress.
+This is the second step of our tutorial. Version 0.2.x of Curium will be able to execute this flawlessly, and 0.1.x may be able to execute this, depending on development progress.
 
 Required for full implementation:
 . data types
