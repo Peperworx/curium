@@ -36,16 +36,12 @@ module.exports = {
     lastUpdated: false,
     nav: [
       {
-        text: 'Guide',
-        link: '/guide/',
-      },
-      {
-        text: 'Config',
-        link: '/config/'
+        text: 'Introduction',
+        link: '/about/',
       },
       {
         text: 'Github',
-        link: 'https://github.com/Peperworx/peperworx-lang/peperworx-lang'
+        link: 'https://github.com/Peperworx/peperworx-lang'
       }
     ],
     sidebar: {
