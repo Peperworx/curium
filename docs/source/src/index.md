@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /ico/logo.jpeg
+heroImage: ico/logo.jpeg
 tagline: A basic, C-like language written in python
 actionText: Introduction →
 actionLink: /about/
