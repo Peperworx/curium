@@ -2,8 +2,8 @@
 home: true
 heroImage: /ico/logo.jpeg
 tagline: A basic, C-like language written in python
-actionText: Quick Start →
-actionLink: /guide/
+actionText: Introduction →
+actionLink: /about/
 #features:
 #- title: Feature 1 Title
 #  details: Feature 1 Description
