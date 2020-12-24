@@ -1,3 +1,6 @@
+---
+sidebar: auto
+---
 # Introduction
 
 
@@ -22,6 +25,11 @@ Not really. Using many language features of python (list comprehensions, C libra
 
 This language will be statically typed. Every variable will have a type, but unlike other statically typed languages, variables types can be reassigned. This is possible because every type is at it's core just an array of bytes. Different parts of the array mean different things. Due to the nature of computers, however, this will only be available for the interpreted version. For the compiled version, this will be less efficient, simply creating a new variable and casting the original value to that new variable, as opposed to realocating the original variable. 
 
+### Everything is an object/type
+
+Function? Object. Number? Object. String? Object. Class? Object. Struct? Object. This means that we can pass functions, structs, numbers, etc around effortlessly. On the top, it will seem a lot like python. Define a function, and it is the same as a callable class.  
+
+
 ## Step 1 Compiler Details
 
 The step 1 compiler is an integral part of this language concept. It converts a parse tree to a custom assembly code which is then assembled into a custom bytecode. This bytecode can then be intepreted or compiled.
@@ -40,3 +48,7 @@ The interpreter will manage memory with a 100% custom memory allocator. The inte
 
 The step 2 compiler will be super similar to the interpreter. It will interpret the bytecode, but instead of performing actions based on what it sees, it will generate NASM assembly from the program.
 
+## The Tutorial
+
+As I said, this language will use Documentation Driven Devlopment, as (in my opinion) the best way to plan is to have a thorough understanding of how it the end result will work. This will be accomplished by means of a tutorial. As I said above, each step of a tutorial will be a minor version, and each section a major version. Patch versions are for security and bug fixes only.
+You can start the tutorial by going [here](/tutorial).
