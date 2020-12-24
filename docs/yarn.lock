@@ -1103,7 +1103,7 @@
     markdown-it-table-of-contents "^0.4.0"
     prismjs "^1.13.0"
 
-"@vuepress/plugin-active-header-links@1.7.1", "@vuepress/plugin-active-header-links@^1.6.0":
+"@vuepress/plugin-active-header-links@1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-active-header-links/-/plugin-active-header-links-1.7.1.tgz#5a16281bebb977fc1c2b93d992b1a3b7ff840641"
   integrity sha512-Wgf/oB9oPZLnYoLjQ/xbQc4Qa3RU5tXAo2dB4Xl/7bUL6SqBxO866kX3wPxKdSOIL58tq8iH9XbUe3Sxi8/ISQ==
@@ -1117,7 +1117,7 @@
   dependencies:
     cross-spawn "^6.0.5"
 
-"@vuepress/plugin-nprogress@1.7.1", "@vuepress/plugin-nprogress@^1.6.0":
+"@vuepress/plugin-nprogress@1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-nprogress/-/plugin-nprogress-1.7.1.tgz#101ebf720eaa635a473e16ca16e7b4a7850331fa"
   integrity sha512-KtqfI3RitbsEbm22EhbooTvhjfMf6zttKlbND7LcyJwP3MEPVYyzQJuET03hk9z4SgCfNV2r/W3sYyejzzTMog==
@@ -1131,7 +1131,7 @@
   dependencies:
     "@vuepress/shared-utils" "1.7.1"
 
-"@vuepress/plugin-search@1.7.1", "@vuepress/plugin-search@^1.6.0":
+"@vuepress/plugin-search@1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-search/-/plugin-search-1.7.1.tgz#f52b6e77af30f452213bc677741cefe8a8309be2"
   integrity sha512-OmiGM5eYg9c+uC50b6/cSxAhqxfD7AIui6JEztFGeECrlP33RLHmteXK9YBBZjp5wTNmoYs+NXI/cWggYUPW8Q==
@@ -6662,7 +6662,7 @@ slash@^2.0.0:
   resolved "https://registry.yarnpkg.com/slash/-/slash-2.0.0.tgz#de552851a1759df3a8f206535442f5ec4ddeab44"
   integrity sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==
 
-smoothscroll-polyfill@^0.4.3, smoothscroll-polyfill@^0.4.4:
+smoothscroll-polyfill@^0.4.3:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/smoothscroll-polyfill/-/smoothscroll-polyfill-0.4.4.tgz#3a259131dc6930e6ca80003e1cb03b603b69abf8"
   integrity sha512-TK5ZA9U5RqCwMpfoMq/l1mrH0JAR7y7KRvOBx0n2869aLxch+gT9GhN3yUfjiw+d/DiF1mKo14+hd62JyMmoBg==
@@ -7521,6 +7521,11 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
+vue-click-outside@^1.0.7:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vue-click-outside/-/vue-click-outside-1.1.0.tgz#48b7680b518923e701643cccb3e165854aad99eb"
+  integrity sha512-pNyvAA9mRXJwPHlHJyjMb4IONSc7khS5lxGcMyE2EIKgNMAO279PWM9Hyq0d5J4FkiSRdmFLwnbjDd5UtPizHQ==
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
@@ -7595,20 +7600,13 @@ vuepress-html-webpack-plugin@^3.2.0:
     toposort "^1.0.0"
     util.promisify "1.0.0"
 
-vuepress-plugin-container@^2.0.2, vuepress-plugin-container@^2.1.5:
+vuepress-plugin-container@^2.0.2:
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/vuepress-plugin-container/-/vuepress-plugin-container-2.1.5.tgz#37fff05662fedbd63ffd3a5463b2592c7a7f3133"
   integrity sha512-TQrDX/v+WHOihj3jpilVnjXu9RcTm6m8tzljNJwYhxnJUW0WWQ0hFLcDTqTBwgKIFdEiSxVOmYE+bJX/sq46MA==
   dependencies:
     "@vuepress/shared-utils" "^1.2.0"
     markdown-it-container "^2.0.0"
-
-vuepress-plugin-smooth-scroll@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/vuepress-plugin-smooth-scroll/-/vuepress-plugin-smooth-scroll-0.0.10.tgz#6cb6926032bd5abd7b928df6e7b73b8dd31b5f9d"
-  integrity sha512-1B7cc0OxROX9aPdktTF6lGqASGh3h0mtiUCmbAVZfGDtTOGUYDDA1BhLV96zkz/v1Zh/UvKP2gF6ADrcV83BMg==
-  dependencies:
-    smoothscroll-polyfill "^0.4.4"
 
 vuepress-plugin-smooth-scroll@^0.0.3:
   version "0.0.3"
@@ -7617,20 +7615,12 @@ vuepress-plugin-smooth-scroll@^0.0.3:
   dependencies:
     smoothscroll-polyfill "^0.4.3"
 
-vuepress-theme-succinct@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/vuepress-theme-succinct/-/vuepress-theme-succinct-1.6.4.tgz#58ca8934fd3e8bfb221ab2f524be77a4ba7dfb49"
-  integrity sha512-R+Z23xf9Lx9creYEldbbouFAh3Tr9YGnhr4/8kwRCc6nio2PiaTWdH+cYaO/BQrn+CQPtwGwTsIvi9FCvxdcHQ==
+vuepress-theme-yuu@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/vuepress-theme-yuu/-/vuepress-theme-yuu-2.3.0.tgz#2f38802bb579d5c64d2fcd450ca16168a25fa14b"
+  integrity sha512-QzGf5kAF8+4fTS6fFtg4o8mqEmiOm525oOw1cWWG+iUN9FWp/yaDlT4RN1xs2km8CNs1st9HvbGksLI1IhJK/Q==
   dependencies:
-    "@vuepress/plugin-active-header-links" "^1.6.0"
-    "@vuepress/plugin-nprogress" "^1.6.0"
-    "@vuepress/plugin-search" "^1.6.0"
-    docsearch.js "^2.5.2"
-    lodash "^4.17.20"
-    stylus "^0.54.8"
-    stylus-loader "^3.0.2"
-    vuepress-plugin-container "^2.1.5"
-    vuepress-plugin-smooth-scroll "^0.0.10"
+    vue-click-outside "^1.0.7"
 
 vuepress@^1.5.3:
   version "1.7.1"
