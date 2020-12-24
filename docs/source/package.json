@@ -10,7 +10,7 @@
   "repository": "https://github.com/Peperworx/peperworx-lang/peperworx-lang",
   "scripts": {
     "dev": "vuepress dev src",
-    "build": "vuepress build src && rm -r -f ../docdist && mkdir ../docs && mv src/.vuepress/dist/* ../docs"
+    "build": "vuepress build src && rm -r -f ../docs && mkdir ../docs && mv src/.vuepress/dist/* ../docs"
   },
   "license": "MIT",
   "devDependencies": {
