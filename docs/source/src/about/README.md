@@ -1,3 +1,14 @@
 # Introduction
 
 
+Peperworx Lang is a conceptual programming language that will be implemented in Python once a "specification" is complete. This "specification" is in fact this documentation. The language will be designed to complete the documentation, one tutorial step at a time.
+
+This language is a C-like language with static typing that can be compiled to multiple targets. The primary target will be a custom assembly language that will assemble into a custom bytecode. This bytecode could then be interpreted or, as I plan to implement in the far future, converted to an ELF executable.
+
+This language will be version using [Semantic Versioning](https://semver.org/) with a twist. Every tutorial step will be a minor version, and every tutorial section will be a major version.
+
+## Why Python??
+
+Python is a very dynamic programming language. We can twist things around, and make things feel the way we want when designing an interface to this language and its subset assembly/bytecode. For example: We can dynamically add new attributes to classes, and list the attributes of classes. We are also not limited on integer and string sizes. 
+This language will be using and abusing typehints. Visual Studio Code, or a similar editor, should be able to give you intellisense (or whatever you are using) information for every step of the way. I will also do my best to comment the code as much as humanly possible.
+
