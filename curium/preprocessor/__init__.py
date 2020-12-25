@@ -57,7 +57,30 @@ class PreProcessor:
         
 
         return out
-    def update(self,in_str:str):
+    
+    def stripComments(self,in_str:str):
+        # Strip every character between a // and a newline that is not in a string
+        splitByStrings = re.split(self.regexString,in_str)
+        
+        # Iterate over every one
+        i=0
+        while i < len(splitByStrings) - 1:
+            c = splitByStrings[i]
+            print(c)
+            if m := re.match(self.regexString,c):
+                i+=len(m.string)
+                continue
+            # If not, strip regular comments first
+            c = "\n".join(re.split("\/\/.*?\\n",c))
+            print("Not in string:",c)
+
+            i+=1
+
+        return in_str
+    def process(self,in_str:str):
+        # First strip comments
+        in_str = self.stripComments(in_str)
+
         # First get each line
         lines = in_str.split("\n")
 
@@ -65,7 +88,7 @@ class PreProcessor:
         # Then iterate over each line
         for line in lines:
             # Strip the comments
-            line = line.split("//")[0]
+            #line = line.split("//")[0]
             # If it is a preprocessor directive
             if line.startswith("%"):
                 # Process it
@@ -78,7 +101,7 @@ class PreProcessor:
                     self.filter(line)
                 )
         
-        # Rejoin it without newlines
-        in_str = "".join(filtered_lines)
+        # Rejoin it with newlines
+        in_str = "\n".join(filtered_lines)
 
-        print(in_str)
+        return in_str
