@@ -61,20 +61,22 @@ class PreProcessor:
     def stripComments(self,in_str:str):
         # Strip every character between a // and a newline that is not in a string
         splitByStrings = re.split(self.regexString,in_str)
-        
-        # Iterate over every one
-        i=0
-        while i < len(splitByStrings) - 1:
-            c = splitByStrings[i]
-            print(c)
-            if m := re.match(self.regexString,c):
-                i+=len(m.string)
+        for i,v in enumerate(splitByStrings):
+            # If it is a string, ignore
+            if i % 2 != 0:
                 continue
-            # If not, strip regular comments first
-            c = "\n".join(re.split("\/\/.*?\\n",c))
-            print("Not in string:",c)
+            
+            # If it is not, then every character between a // and a newline needs to be removed
+            r = re.split(r"//.*(?=\n)*",v)
+            print(r)
+            splitByStrings[i] = "".join(r)
+        
+        splitByStrings = re.split(self.regexString,"".join(splitByStrings))
+        # Now we have removed all single line comments
+        
+        # Multi line comments will be implemented at a later time
 
-            i+=1
+        in_str = "".join(filter(None,splitByStrings))
 
         return in_str
     def process(self,in_str:str):

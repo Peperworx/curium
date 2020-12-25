@@ -33,7 +33,7 @@ class TestPreprocessor(unittest.TestCase):
         pre.knownNames = {}
         inp = []
         inp += ["a('//Test',c); // test"]
-        inp += ["d(\"/* test /*\",f); /* test /*"]
+        inp += ["d(\"// test //\",f); // test //"]
         out = pre.process(
             "\n".join(inp)
         )
