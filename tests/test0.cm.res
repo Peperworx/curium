@@ -1,5 +1,5 @@
+function[int]: main(){
+    print("Hello,World!\n");
 
-
-print(c,"ab");
-
-print(c,"// So should this");
+    return 0;
+}

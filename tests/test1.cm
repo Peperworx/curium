@@ -1,0 +1,13 @@
+function[int]: main(){
+    // Here we define the variable a as 7
+    int: a = 7;
+
+    // And here we define the variable b as 6
+    int: b = 6;
+
+    // And here we do some basic math,
+    // Assigning the value a * b to the variable c
+    int: c = a + b;
+
+    return 0;
+}

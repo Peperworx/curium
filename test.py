@@ -1,66 +1,27 @@
 from curium import preprocessor
-from curium import parser
+from curium import lexer
 from io import StringIO
 import unittest
 import hashlib
 
-class TestPreprocessor(unittest.TestCase):
-    def test_basic_define(self):
-        pre = preprocessor.PreProcessor()
-        inp = []
-        inp += ["%define a bc"]
-        inp += ['print(a,"a");']
-        
-        output = pre.process(
-            "\n".join(inp)
-        )
-        self.assertEqual(output,'print(bc,"a");')
-        print()
-    def test_multiline(self):
-        # Test multiline preprocessor with no preprocessor statements
-        pre = preprocessor.PreProcessor()
-        pre.knownNames = {}
-        inp = []
-        inp += ["a(b,c);"]
-        inp += ["d(e,f);"]
-        output = pre.process(
-            "\n".join(inp)
-        )
-        
-        self.assertEqual(output,"\n".join(inp))
-    
-    def test_comments(self):
-        # Test multiline preprocessor with no preprocessor statements
-        pre = preprocessor.PreProcessor()
-        pre.knownNames = {}
-        inp = []
-        inp += ["a('//Test',c); // test"]
-        inp += ["d(\"// test //\",f); // test //"]
-        out = pre.process(
-            "\n".join(inp)
-        )
-        print("No comments:")
-        print(out)
+
 
 def test_file(filename,result):
     pre = preprocessor.PreProcessor()
     with open(filename) as f:
         out = pre.process(f.read())
-    
     with open(result) as f:
         # Now compare and assert
         # We strip whitespace for consistancy.
         assert "".join(f.read().split()) == "".join(out.split())
-
-    # Now parse it
-    prs = parser.Parser()
     
-    parsed = prs.parse(out)
-    print(parsed)
+    # Now lex it
+    lex = lexer.Lex()
+    for l in lex.tokenize(out):
+        print(l)
 
 
 if __name__ == "__main__":
-    for i in range(1):
+    for i in range(3):
         test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
-    #unittest.main()
     

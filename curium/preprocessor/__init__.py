@@ -68,7 +68,6 @@ class PreProcessor:
             
             # If it is not, then every character between a // and a newline needs to be removed
             r = re.split(r"//.*(?=\n)*",v)
-            print(r)
             splitByStrings[i] = "".join(r)
         
         splitByStrings = re.split(self.regexString,"".join(splitByStrings))

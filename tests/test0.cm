@@ -1,6 +1,5 @@
-%define ab c
+function[int]: main(){
+    print("Hello,World!\n");
 
-// This file is a test of the preprocessor
-print(ab,"ab"); // This should work fine
-
-print(ab,"// So should this"); // And this
+    return 0;
+}

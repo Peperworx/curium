@@ -1,22 +1,32 @@
 [[package]]
-name = "lark-parser"
-version = "0.11.1"
-description = "a modern parsing library"
+name = "sly"
+version = "0.4"
+description = "SLY - Sly Lex Yacc"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.extras]
-nearley = ["js2py"]
-regex = ["regex"]
+test = ["pytest", "regex"]
+
+[[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "2bb4b92f2bb5631b806fb005befa44de354b4e31ce5cb7f3261d88361e7b5281"
+content-hash = "8921ed6d819d142068d0cbb616d73d99fc7a99ed24812b2f15f9dbee1eb2ccdc"
 
 [metadata.files]
-lark-parser = [
-    {file = "lark-parser-0.11.1.tar.gz", hash = "sha256:20bdefdf1b6e9bcb38165ea5cc4f27921a99c6f4c35264a3a953fd60335f1f8c"},
-    {file = "lark_parser-0.11.1-py2.py3-none-any.whl", hash = "sha256:8b747e1f544dcc2789e3feaddd2a50c6a73bed69d62e9c69760c1e1f7d23495f"},
+sly = [
+    {file = "sly-0.4.tar.gz", hash = "sha256:e5f2266a231322cc17519fbc3a3ba1c6335fed5a9a55abe0e598a35aea0ac32a"},
+]
+toml = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]

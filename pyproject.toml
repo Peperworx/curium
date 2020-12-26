@@ -6,7 +6,8 @@ authors = ["Riley Wilton <meetingprince34@outlook.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-lark-parser = "^0.11.1"
+toml = "^0.10.2"
+sly = "^0.4"
 
 [tool.poetry.dev-dependencies]
 
