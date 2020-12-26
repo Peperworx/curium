@@ -1,12 +1,9 @@
 from curium import preprocessor
 from curium import lexer
-from io import StringIO
-import unittest
-import hashlib
 
 
 
-def test_file(filename,result):
+def test_file(filename: str,result: str):
     pre = preprocessor.PreProcessor()
     with open(filename) as f:
         out = pre.process(f.read())
@@ -22,6 +19,6 @@ def test_file(filename,result):
 
 
 if __name__ == "__main__":
-    for i in range(3):
+    for i in range(4):
         test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
     
