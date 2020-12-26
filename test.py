@@ -1,6 +1,6 @@
 from curium import preprocessor
 from curium import lexer
-
+import json
 
 
 def test_file(filename: str,result: str):
@@ -14,9 +14,24 @@ def test_file(filename: str,result: str):
     
     # Now lex it
     lex = lexer.Lex()
+    
+    # If there are no errors, lexing succeded
+    # Lets dump these to some lexdump files
+    lexdump = []
     for l in lex.tokenize(out):
-        print(l)
-
+        lexdump.append(
+            {
+                "type":l.type,
+                "value":l.value,
+                "lineno":l.lineno,
+                "index":l.index,
+                "column":lexer.find_column(out,l)-1 # Remove one so that it starts at 1
+            }
+        )
+    
+    # Save the lexdump
+    with open(filename+".lexdump","w+") as f:
+        f.write(json.dumps(lexdump,indent=4))
 
 if __name__ == "__main__":
     for i in range(4):

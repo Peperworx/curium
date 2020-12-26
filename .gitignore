@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# The tests dump tokenized data into one of these
+*.lexdump

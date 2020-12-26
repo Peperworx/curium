@@ -4,7 +4,12 @@ from sly import Lexer
 
 # Get rid of them pylint errors
 _ = ""
-
+def find_column(text, token):
+        last_cr = text.rfind('\n', 0, token.index)
+        if last_cr < 0:
+            last_cr = 0
+        column = (token.index - last_cr) + 1
+        return column
 class Lex(Lexer):
     # Some basic literals
     literals = {
@@ -148,3 +153,5 @@ class Lex(Lexer):
     @_(r'\n+')
     def newline(self, t):
         self.lineno += t.value.count('\n')
+    
+    
