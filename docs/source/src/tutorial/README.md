@@ -13,6 +13,8 @@ Required for full implementation:
 - returns
 - templating
 - variables
+
+Lexing Complete
 :::
 
 The tutorial is divided into several steps. This is the first step.
@@ -62,6 +64,9 @@ Required for full implementation:
 - mathematical parsing
 - variables
 - templating
+
+
+Lexing Complete
 :::
 
 
@@ -117,6 +122,10 @@ This section will be implemented in 0.3.x
 Required for full implementation:
 - structs
 - pointers
+
+
+
+Lexing Complete
 :::
 
 Most languages have an implementation of data structures. In this section, we will be overviewing a form of static data structures simply called structs.
