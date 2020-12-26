@@ -1,4 +1,5 @@
 from curium import preprocessor
+from curium import parser
 from io import StringIO
 import unittest
 import hashlib
@@ -41,19 +42,25 @@ class TestPreprocessor(unittest.TestCase):
         print("No comments:")
         print(out)
 
-def preprocessor_test_file(filename,result):
+def test_file(filename,result):
     pre = preprocessor.PreProcessor()
     with open(filename) as f:
         out = pre.process(f.read())
     
     with open(result) as f:
-        # Now compare and return
+        # Now compare and assert
         # We strip whitespace for consistancy.
-        return "".join(f.read().split()) == "".join(out.split())
+        assert "".join(f.read().split()) == "".join(out.split())
+
+    # Now parse it
+    prs = parser.Parser()
+    
+    parsed = prs.parse(out)
+    print(parsed)
 
 
 if __name__ == "__main__":
-    for i in range(0):
-        preprocessor_test_file(f"tests/test{i}.cm","tests/test{i}.cm.res")
-    unittest.main()
+    for i in range(1):
+        test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
+    #unittest.main()
     

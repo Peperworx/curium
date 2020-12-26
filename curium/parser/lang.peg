@@ -1,5 +1,0 @@
-# A block of code
-block = "{" instruction* "}"
-
-# A single instruction
-instruction = ""
