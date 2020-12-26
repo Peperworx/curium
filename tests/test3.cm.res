@@ -1,4 +1,4 @@
-function[int] main(){
+function[int]: main(){
     if(a == b){
         print("hello!");
     } elif {

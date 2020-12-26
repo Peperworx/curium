@@ -1,6 +1,9 @@
-import builtins
 from typing import Any, get_type_hints
+from .tokens import *
 from sly import Lexer
+
+# Get rid of them pylint errors
+_ = ""
 
 class Lex(Lexer):
     # Some basic literals
