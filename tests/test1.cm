@@ -1,4 +1,4 @@
-function[int]: main(){
+function[int]: main = (){
     // Here we define the variable a as 7
     int: a = 7;
 

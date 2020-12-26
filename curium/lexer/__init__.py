@@ -1,4 +1,6 @@
-from typing import Any, get_type_hints
+from typing import Any, Collection, get_type_hints
+
+from sly.yacc import _collect_grammar_rules
 from .tokens import *
 from sly import Lexer
 
@@ -11,23 +13,9 @@ def find_column(text, token):
         column = (token.index - last_cr) + 1
         return column
 class Lex(Lexer):
-    # Some basic literals
-    literals = {
-        '=', 
-        '+',
-        "-",
-        "*",
-        "/",
-        '(',
-        ')',
-        '[',
-        ']',
-        '{',
-        '}',
-        ',',
-        ';',
-        ':'
-    }
+    
+
+
 
     # Ignore tabs and spaces
     ignore = ' \t'
@@ -73,8 +61,29 @@ class Lex(Lexer):
         MUL,
         DIV,
         MOD,
-        FLOORDIV
+        FLOORDIV,
+        INC,
+        DEC,
+        LPAREN,
+        RPAREN,
+        LBRACK,
+        RBRACK,
+        LBRACE,
+        RBRACE,
+        COMMA,
+        SEMICOLON,
+        COLON
     }
+    # Literals, because the builtin function cant have precedence
+    LPAREN          = r"\("
+    RPAREN          = r"\)"
+    LBRACK          = r"\["
+    RBRACK          = r"\]"
+    LBRACE          = r"{"
+    RBRACE          = r"}"
+    COMMA           = r","
+    SEMICOLON       = r";"
+    COLON           = r":"
 
     # Add a token for a name
     NAME            = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -96,6 +105,10 @@ class Lex(Lexer):
 
     # Token for string
     STRING          = r'\".*?\"'
+
+    # INC and DEC
+    INC             = r"\+\+"
+    DEC             = r"--"
 
     # Logical operators
     LAND            = r'&&'

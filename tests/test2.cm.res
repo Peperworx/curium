@@ -1,4 +1,4 @@
-struct: listItem {
+struct: listItem = {
     int: contents;
     listItem*: next;
 }

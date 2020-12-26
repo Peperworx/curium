@@ -1,4 +1,5 @@
 from curium import preprocessor
+from curium import parser
 from curium import lexer
 import json
 
@@ -18,6 +19,7 @@ def test_file(filename: str,result: str):
     # If there are no errors, lexing succeded
     # Lets dump these to some lexdump files
     lexdump = []
+    
     for l in lex.tokenize(out):
         lexdump.append(
             {
@@ -32,6 +34,11 @@ def test_file(filename: str,result: str):
     # Save the lexdump
     with open(filename+".lexdump","w+") as f:
         f.write(json.dumps(lexdump,indent=4))
+
+    # Now try to parse it
+    lexed = lex.tokenize(out)
+    parse = parser.Parse()
+    parsed = parse.parse(lexed)
 
 if __name__ == "__main__":
     for i in range(4):
