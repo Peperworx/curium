@@ -1,0 +1,6 @@
+%define ab c
+
+// This file is a test of the preprocessor
+print(ab,"ab"); // This should work fine
+
+print(ab,"// So should this"); // And this

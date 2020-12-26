@@ -1,6 +1,7 @@
-import unittest
 from curium import preprocessor
-
+from io import StringIO
+import unittest
+import hashlib
 
 class TestPreprocessor(unittest.TestCase):
     def test_basic_define(self):
@@ -39,5 +40,20 @@ class TestPreprocessor(unittest.TestCase):
         )
         print("No comments:")
         print(out)
+
+def preprocessor_test_file(filename,result):
+    pre = preprocessor.PreProcessor()
+    with open(filename) as f:
+        out = pre.process(f.read())
+    
+    with open(result) as f:
+        # Now compare and return
+        # We strip whitespace for consistancy.
+        return "".join(f.read().split()) == "".join(out.split())
+
+
 if __name__ == "__main__":
+    for i in range(0):
+        preprocessor_test_file(f"tests/test{i}.cm","tests/test{i}.cm.res")
     unittest.main()
+    
