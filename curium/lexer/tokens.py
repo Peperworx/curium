@@ -1,6 +1,6 @@
 # These are just here to get rid of some errors
 if True:
-    NAME = ""
+    NAME = ["",]
     STRING = ""
     HEXIDECIMAL = ""
     OCTAL = ""

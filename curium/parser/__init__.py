@@ -4,7 +4,7 @@ from ..lexer import Lex
 
 from . import tree
 
-_ = ""
+_ = lambda *v: v
 
 class Parse(SLYParser):
     tokens = Lex.tokens
@@ -104,7 +104,12 @@ class Parse(SLYParser):
         "expr FLOORDIV expr" # Thats all for now
     )
     def expr(self, v):
-        return tree.BinOp(v[1],v[0],v[2],v.lineno,v.index)
+        return (
+            "binary-expression",
+            p[1],
+            p.expr0,
+            p.expr1
+        )
     
     # Add a rule for assignment operators
     @_(
@@ -117,8 +122,16 @@ class Parse(SLYParser):
         "expr FLOORASSG expr",
     )
     def assg(self,v):
-        return tree.BinOp(v[1],v[0],v[2],v.lineno,v.index)
-    # Prefix operators
+        return (
+            "assignment-operator",
+            v[1],
+            v[0],
+            v[3]
+        )
+    
+    
+    
+    # Unary operators
     @_(
         "INC expr %prec INCP",
         "DEC expr %prec DECP",
@@ -126,105 +139,68 @@ class Parse(SLYParser):
         "SUB expr %prec UMIN"
     )
     def expr(self,v):
-        return tree.UnOp(v[0],v[1],v.lineno,v.index)
-
-    @_('LPAREN expr RPAREN')
-    def expr(self, v):
-        return v.expr
+        return (
+            "unary-expr",
+            v[0],
+            v[1]
+        )
     
-    # Rule for variable initialization
-    @_("NAME COLON NAME SEMICOLON")
+    # A rule for parentheses
+    @_("LPAREN expr RPAREN")
     def expr(self,v):
-        return tree.Initialize(
-            v[2],
-            v[0],
-            None,
-            v.lineno,
-            v.index
-        )
-    
-    # Rule for variable declaration
-    @_("NAME COLON NAME SEMICOLON assg expr")
-    def expr(self,v):
-        return tree.Initialize(
-            v[2],
-            v[0],
-            v[5],
-            v.lineno,
-            v.index
-        )
-
-    # Rule for name templates
+        return ("group-expr",v[1])
     
 
-    @_("NAME LBRACK nametemp RBRACK")
-    def nametemp(self,v):
-        return tree.Name(
-            v[0],
-            v[2],
-            v.lineno,
-            v.index
-        )
-
-    # Rule for variable assignent
-    @_("NAME assg expr")
-    def expr(selv,v):
-        return tree.BinOp(v[1],v[0],v[2])
-
-    # All Numbers
+    # A rule for integer and string
     @_(
-        "DECIMAL",
         "HEXIDECIMAL",
-        "OCTAL",
-        "BINARY"
+        "DECIMAL",
+        "BINARY",
+        "OCTAL"
     )
     def expr(self,v):
-        # Return a number object
-        return tree.Number(v[0],v.lineno,v.index)
+        return (
+            "integer-literal",
+            v[0]
+        )
     
-    # All Strings
-    @_("STRING")
+    # Time for name rules!
+
+    # Names can be assigned templates
+    # For this we need tuples
+
+    # So here is a rule for tuples
+    @_(
+        "expr COMMA tuple",
+        "COMMA"
+    )   
+    def tuple(self,v):
+        return (
+            "tuple-literal",
+            v.text
+        )
+    # And here is the actual rule
+    @_(
+        "tuple"
+    )
     def expr(self,v):
-        return tree.String(v[0],v.lineno,v.index)
-    
-    # All Names (Except conditionals)
-    @_("NAME")
-    def expr(self,v):
-        return tree.Name(v[0],v.lineno,v.index)
-    
-    # Subscript
-    @_("expr LBRACK expr RBRACK")
-    def expr(self,v):
-        return tree.BinOp("[]",v[0],v[2])
+        return v[0]
     
 
-    
+    # Now for names
 
-    # Conditional
-    @_("conditional")
+    # Basic name
+    @_(
+        "NAME LBRACK expr RBRACK"
+    )
+    def name(self,v):
+        return (
+            "name-literal",
+            v.NAME,
+            v.name
+        )
+    
+    # And the actual expression
+    @_("name")
     def expr(self,v):
         return v
-    
-    @_("IF LPAREN expr RPAREN LBRACE expr RBRACE elseorif")
-    def conditional(self,v):
-        return tree.Conditional(
-            v[0],
-            v[2],
-            v[5],
-            v[7]
-        )
-
-    @_("ELSE LBRACE expr RBRACE")
-    def elseorif(self,v):
-        return tree.Else(
-            v[0],
-            v[5]
-        )
-    @_("ELIF LPAREN expr RPAREN LBRACE expr RBRACE elseorif")
-    def elseorif(self,v):
-        return tree.Conditional(
-            v[0],
-            v[2],
-            v[5],
-            v[7]
-        )

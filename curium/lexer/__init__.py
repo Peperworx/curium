@@ -5,7 +5,7 @@ from .tokens import *
 from sly import Lexer
 
 # Get rid of them pylint errors
-_ = ""
+_ = lambda v: 0 == 0
 def find_column(text, token):
         last_cr = text.rfind('\n', 0, token.index)
         if last_cr < 0:

@@ -41,6 +41,7 @@ def test_file(filename: str,result: str):
     parsed = parse.parse(lexed)
 
 if __name__ == "__main__":
-    for i in range(4):
+    # Limiting to the first one right now
+    for i in range(1):
         test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
     

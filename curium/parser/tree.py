@@ -65,3 +65,8 @@ class Name:
         self.template = template
         self.lineno = lineno
         self.index = index
+
+class Function:
+    def __init__(self,contents,args):
+        self.contents = contents
+        self.args = args
