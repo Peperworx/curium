@@ -1,3 +1,4 @@
+from re import match
 from sly import Parser as SLYParser
 from typing_extensions import IntVar
 from ..lexer.tokens import *
@@ -81,6 +82,32 @@ class Parse(SLYParser):
     )
 
     
+    @_("expr SEMICOLON")
+    def expr(self,v):
+        return (
+            'statement',
+            v[0]
+        )
+
+    @_("expr LPAREN RPAREN")
+    def expr(self,v):
+        return (
+            'function-call',
+            v[0],
+            (
+                'empty-expr'
+            )
+        )
+    
+    @_("expr LPAREN expr RPAREN")
+    def expr(self,v):
+        return (
+            'function-call',
+            v[0],
+            v[2]
+        )
+    
+    
     # Assignment initialization
     @_(
         "expr COLON NAME ASSG expr",
@@ -91,7 +118,7 @@ class Parse(SLYParser):
         "expr COLON NAME DIVASSG expr",
         "expr COLON NAME MODASSG expr"
     )
-    def varassginit(self,v):
+    def expr(self,v):
         return (
             'var-assign-init',
             v[3],
@@ -99,6 +126,38 @@ class Parse(SLYParser):
             v[2],
             v[4]
         )
+    
+    # Variable assignment
+    @_(
+        "expr ASSG expr",
+        "expr ADDASSG expr",
+        "expr SUBASSG expr",
+        "expr MULASSG expr",
+        "expr FLOORASSG expr",
+        "expr DIVASSG expr",
+        "expr MODASSG expr"
+    )
+    def expr(self,v):
+        return (
+            'var-assign',
+            v[1],
+            v[0],
+            v[2]
+        )
+
+    # Variable initialization
+    @_(
+        "expr COLON NAME"
+    )
+    def expr(self,v):
+        return (
+            'var-init',
+            v[0],
+            v[2],
+        )
+
+    
+    
 
 
 
@@ -154,12 +213,16 @@ class Parse(SLYParser):
             v[0],
             v[1]
         )
-    
+    @_(
+        "LPAREN expr RPAREN"
+    )
+    def expr(self,v):
+        return v[1]
     
     # Types
 
 
-    @_("ltype","func")
+    @_("ltype","typedName")
     def expr(self,v):
         return (
             'literal',
@@ -168,7 +231,7 @@ class Parse(SLYParser):
 
     # Function type
     @_('LPAREN expr RPAREN LBRACE expr RBRACE')
-    def func(self,v):
+    def ltype(self,v):
         return (
             'function-type',
             v[1],
@@ -176,7 +239,7 @@ class Parse(SLYParser):
         )
     # Function type
     @_('LPAREN RPAREN LBRACE expr RBRACE')
-    def func(self,v):
+    def ltype(self,v):
         return (
             'function-type',
             ('empty-type'),
@@ -202,23 +265,21 @@ class Parse(SLYParser):
             v[0]
         )
     
-    
-    @_('NAME LBRACK ltype RBRACK')
-    def ltype(self,v):
+    @_("NAME LBRACK typedName RBRACK")
+    def typedName(self,v):
         return (
-            'name-literal-tagged',
+            'typed-name',
             v[0],
-            v[1]
+            v[2]
         )
-
     
-    # Regular, non tagged names
-    @_('NAME')
-    def ltype(self,v):
+    @_("NAME")
+    def typedName(self,v):
         return (
-            'name-literal',
+            'untyped-name',
             v[0]
         )
+    
     
     def find_column(self, text, token):
         last_cr = text.rfind('\n', 0, token.index)
@@ -230,10 +291,14 @@ class Parse(SLYParser):
     def error(self,t):
         col = self.find_column(self.text,t)
         line = self.text.split("\n")[t.lineno-1]
-        print(line)
-        print(f'{" "*(col-1)}^')
-        print(f"Syntax error at line {t.lineno} col {col}:")
-        print(f"\tUnexpected token \"{t.value}\"")
+        print("|"+"-"*max(len(line),50))
+        print("|",line)
+        print(
+            f'|{" " * (col - 1)}{"^" * len(t.value)}'
+        )
+        print(f"| Syntax error at line {t.lineno} col {col}:")
+        print(f"| \tUnexpected token \"{t.value}\"")
+        print("|\n")
         
 
     
