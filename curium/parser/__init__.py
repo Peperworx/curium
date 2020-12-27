@@ -82,41 +82,20 @@ class Parse(SLYParser):
     )
 
     
-    @_("expr SEMICOLON")
-    def expr(self,v):
-        return (
-            'statement',
-            v[0]
-        )
-
-    @_("expr LPAREN RPAREN")
-    def expr(self,v):
-        return (
-            'function-call',
-            v[0],
-            (
-                'empty-expr'
-            )
-        )
     
-    @_("expr LPAREN expr RPAREN")
-    def expr(self,v):
-        return (
-            'function-call',
-            v[0],
-            v[2]
-        )
+
+    
     
     
     # Assignment initialization
     @_(
-        "expr COLON NAME ASSG expr",
-        "expr COLON NAME ADDASSG expr",
-        "expr COLON NAME SUBASSG expr",
-        "expr COLON NAME MULASSG expr",
-        "expr COLON NAME FLOORASSG expr",
-        "expr COLON NAME DIVASSG expr",
-        "expr COLON NAME MODASSG expr"
+        "expr COLON NAME ASSG expr SEMICOLON",
+        "expr COLON NAME ADDASSG expr SEMICOLON",
+        "expr COLON NAME SUBASSG expr SEMICOLON",
+        "expr COLON NAME MULASSG expr SEMICOLON",
+        "expr COLON NAME FLOORASSG expr SEMICOLON",
+        "expr COLON NAME DIVASSG expr SEMICOLON",
+        "expr COLON NAME MODASSG expr SEMICOLON"
     )
     def expr(self,v):
         return (
@@ -129,13 +108,13 @@ class Parse(SLYParser):
     
     # Variable assignment
     @_(
-        "expr ASSG expr",
-        "expr ADDASSG expr",
-        "expr SUBASSG expr",
-        "expr MULASSG expr",
-        "expr FLOORASSG expr",
-        "expr DIVASSG expr",
-        "expr MODASSG expr"
+        "expr ASSG expr SEMICOLON",
+        "expr ADDASSG expr SEMICOLON",
+        "expr SUBASSG expr SEMICOLON",
+        "expr MULASSG expr SEMICOLON",
+        "expr FLOORASSG expr SEMICOLON",
+        "expr DIVASSG expr SEMICOLON",
+        "expr MODASSG expr SEMICOLON"
     )
     def expr(self,v):
         return (
@@ -147,7 +126,7 @@ class Parse(SLYParser):
 
     # Variable initialization
     @_(
-        "expr COLON NAME"
+        "expr COLON NAME SEMICOLON"
     )
     def expr(self,v):
         return (
@@ -157,7 +136,23 @@ class Parse(SLYParser):
         )
 
     
+    @_("NAME LPAREN RPAREN SEMICOLON")
+    def expr(self,v):
+        return (
+            'function-call',
+            v[0],
+            (
+                'empty-expr'
+            )
+        )
     
+    @_("NAME LPAREN expr RPAREN SEMICOLON")
+    def expr(self,v):
+        return (
+            'function-call',
+            v[0],
+            v[2]
+        )
 
 
 
