@@ -80,26 +80,27 @@ class Parse(SLYParser):
         )
     )
 
-    @_('expr SEMICOLON')
-    def statement(self,v):
-        return v[0]
+    
+    # Assignment initialization
+    @_(
+        "expr COLON NAME ASSG expr",
+        "expr COLON NAME ADDASSG expr",
+        "expr COLON NAME SUBASSG expr",
+        "expr COLON NAME MULASSG expr",
+        "expr COLON NAME FLOORASSG expr",
+        "expr COLON NAME DIVASSG expr",
+        "expr COLON NAME MODASSG expr"
+    )
+    def varassginit(self,v):
+        return (
+            'var-assign-init',
+            v[3],
+            v[0],
+            v[2],
+            v[4]
+        )
 
-    # Function calls
-    @_('name LPAREN RPAREN')
-    def statement(self,v):
-        return (
-            'function-call',
-            v[0],
-            ""
-        )
-    # Function calls
-    @_('name LPAREN expr RPAREN')
-    def statement(self,v):
-        return (
-            'function-call',
-            v[0],
-            v[2]
-        )
+
 
 
     # Add a rule for every binary operator
@@ -155,118 +156,84 @@ class Parse(SLYParser):
         )
     
     
+    # Types
 
 
-    # A rule for integer and string
+    @_("ltype","func")
+    def expr(self,v):
+        return (
+            'literal',
+            v[0]
+        )
+
+    # Function type
+    @_('LPAREN expr RPAREN LBRACE expr RBRACE')
+    def func(self,v):
+        return (
+            'function-type',
+            v[1],
+            v[4]
+        )
+    # Function type
+    @_('LPAREN RPAREN LBRACE expr RBRACE')
+    def func(self,v):
+        return (
+            'function-type',
+            ('empty-type'),
+            v[4]
+        )
+
     @_(
         "HEXIDECIMAL",
         "DECIMAL",
         "BINARY",
         "OCTAL"
     )
-    def expr(self,v):
+    def ltype(self,v):
         return (
             "integer-literal",
             v[0]
         )
     
     @_('STRING')
-    def expr(self,v):
+    def ltype(self,v):
         return (
             'string-literal',
             v[0]
         )
     
     
-    # Rules for names
-    @_("NAME LBRACK expr RBRACK")
-    def name(self,v):
+    @_('NAME LBRACK ltype RBRACK')
+    def ltype(self,v):
         return (
-            'name-literal-template',
+            'name-literal-tagged',
             v[0],
-            v[2]
+            v[1]
         )
+
     
-    @_("NAME")
-    def name(self,v):
+    # Regular, non tagged names
+    @_('NAME')
+    def ltype(self,v):
         return (
             'name-literal',
             v[0]
         )
     
-    @_("name")
-    def expr(self,v):
-        return v
+    def find_column(self, text, token):
+        last_cr = text.rfind('\n', 0, token.index)
+        if last_cr < 0:
+            last_cr = 0
+        column = (token.index - last_cr) + 1
+        return column
     
-    # Function definitions
-    @_('LPAREN RPAREN LBRACE expr RBRACE')
-    def expr(self,v):
-        return (
-            'function-def',
-            "",
-            v[3]
-        )
-    @_('LPAREN expr RPAREN LBRACE expr RBRACE')
-    def expr(self,v):
-        return (
-            'function-def',
-            v[1],
-            v[4]
-        )
-    
-    
-    
-    # Assignment expressions
+    def error(self,t):
+        col = self.find_column(self.text,t)
+        line = self.text.split("\n")[t.lineno-1]
+        print(line)
+        print(f'{" "*(col-1)}^')
+        print(f"Syntax error at line {t.lineno} col {col}:")
+        print(f"\tUnexpected token \"{t.value}\"")
+        
 
-    @_(
-        "name COLON name ASSG expr", # Asignment operators are to
-        "name COLON name ADDASSG expr",
-        "name COLON name SUBASSG expr",
-        "name COLON name MULASSG expr",
-        "name COLON name DIVASSG expr",
-        "name COLON name MODASSG expr",
-        "name COLON name FLOORASSG expr"
-    )
-    def expr(self,v):
-        return (
-            'assign',
-            v[0],
-            v[1],
-            v[2]
-        )
-
-    @_(
-        "name ASSG expr", # Asignment operators are to
-        "name ADDASSG expr",
-        "name SUBASSG expr",
-        "name MULASSG expr",
-        "name DIVASSG expr",
-        "name MODASSG expr",
-        "name FLOORASSG expr"
-    )
-    def expr(self,v):
-        return (
-            'assign',
-            v[0],
-            v[1],
-            v[2]
-        )
-    
-
-
-    
-    
-    
-    
-    
-    # A rule for parentheses
-    @_("LPAREN expr RPAREN")
-    def expr(self,v):
-        return ("group-expr",v[1])
-    
-
-    
-    
-    
-    
     

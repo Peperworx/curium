@@ -38,7 +38,9 @@ def test_file(filename: str,result: str):
     # Now try to parse it
     lexed = lex.tokenize(out)
     parse = parser.Parse()
+    parse.text = out
     parsed = parse.parse(lexed)
+    print(parsed)
 
 if __name__ == "__main__":
     # Limiting to the first one right now
