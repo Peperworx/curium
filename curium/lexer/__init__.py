@@ -33,6 +33,7 @@ class Lex(Lexer):
         ELIF,
         WHILE,
         FOR,
+        RETURN,
         LAND,
         LOR,
         LNOT,
@@ -94,6 +95,7 @@ class Lex(Lexer):
     NAME['elif']    = ELIF
     NAME['while']   = WHILE
     NAME['for']     = FOR
+    NAME['return']  = RETURN
     
 
     # Token for integers

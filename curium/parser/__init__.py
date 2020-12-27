@@ -1,4 +1,5 @@
 from sly import Parser as SLYParser
+from typing_extensions import IntVar
 from ..lexer.tokens import *
 from ..lexer import Lex
 
@@ -18,7 +19,10 @@ class Parse(SLYParser):
             OCTAL,
             BINARY,
             STRING,
-            NAME
+            NAME,
+            RETURN,
+            LPAREN,
+            RPAREN
         ),(
             "left", 
             COMMA
@@ -76,6 +80,26 @@ class Parse(SLYParser):
         )
     )
 
+    @_('expr SEMICOLON')
+    def statement(self,v):
+        return v[0]
+
+    # Function calls
+    @_('name LPAREN RPAREN')
+    def statement(self,v):
+        return (
+            'function-call',
+            v[0],
+            ""
+        )
+    # Function calls
+    @_('name LPAREN expr RPAREN')
+    def statement(self,v):
+        return (
+            'function-call',
+            v[0],
+            v[2]
+        )
 
 
     # Add a rule for every binary operator
@@ -96,6 +120,7 @@ class Parse(SLYParser):
         "expr LT expr",
         "expr GTEQ expr",
         "expr LTEQ expr",
+        
         "expr ADD expr", # Finaly mathematical operators
         "expr SUB expr",
         "expr MUL expr",
@@ -106,28 +131,12 @@ class Parse(SLYParser):
     def expr(self, v):
         return (
             "binary-expression",
-            p[1],
-            p.expr0,
-            p.expr1
+            v[1],
+            v.expr0,
+            v.expr1
         )
     
-    # Add a rule for assignment operators
-    @_(
-        "expr ASSG expr", # Asignment operators are to
-        "expr ADDASSG expr",
-        "expr SUBASSG expr",
-        "expr MULASSG expr",
-        "expr DIVASSG expr",
-        "expr MODASSG expr",
-        "expr FLOORASSG expr",
-    )
-    def assg(self,v):
-        return (
-            "assignment-operator",
-            v[1],
-            v[0],
-            v[3]
-        )
+    
     
     
     
@@ -145,11 +154,8 @@ class Parse(SLYParser):
             v[1]
         )
     
-    # A rule for parentheses
-    @_("LPAREN expr RPAREN")
-    def expr(self,v):
-        return ("group-expr",v[1])
     
+
 
     # A rule for integer and string
     @_(
@@ -164,43 +170,103 @@ class Parse(SLYParser):
             v[0]
         )
     
-    # Time for name rules!
-
-    # Names can be assigned templates
-    # For this we need tuples
-
-    # So here is a rule for tuples
-    @_(
-        "expr COMMA tuple",
-        "COMMA"
-    )   
-    def tuple(self,v):
-        return (
-            "tuple-literal",
-            v.text
-        )
-    # And here is the actual rule
-    @_(
-        "tuple"
-    )
+    @_('STRING')
     def expr(self,v):
-        return v[0]
+        return (
+            'string-literal',
+            v[0]
+        )
     
-
-    # Now for names
-
-    # Basic name
-    @_(
-        "NAME LBRACK expr RBRACK"
-    )
+    
+    # Rules for names
+    @_("NAME LBRACK expr RBRACK")
     def name(self,v):
         return (
-            "name-literal",
-            v.NAME,
-            v.name
+            'name-literal-template',
+            v[0],
+            v[2]
         )
     
-    # And the actual expression
+    @_("NAME")
+    def name(self,v):
+        return (
+            'name-literal',
+            v[0]
+        )
+    
     @_("name")
     def expr(self,v):
         return v
+    
+    # Function definitions
+    @_('LPAREN RPAREN LBRACE expr RBRACE')
+    def expr(self,v):
+        return (
+            'function-def',
+            "",
+            v[3]
+        )
+    @_('LPAREN expr RPAREN LBRACE expr RBRACE')
+    def expr(self,v):
+        return (
+            'function-def',
+            v[1],
+            v[4]
+        )
+    
+    
+    
+    # Assignment expressions
+
+    @_(
+        "name COLON name ASSG expr", # Asignment operators are to
+        "name COLON name ADDASSG expr",
+        "name COLON name SUBASSG expr",
+        "name COLON name MULASSG expr",
+        "name COLON name DIVASSG expr",
+        "name COLON name MODASSG expr",
+        "name COLON name FLOORASSG expr"
+    )
+    def expr(self,v):
+        return (
+            'assign',
+            v[0],
+            v[1],
+            v[2]
+        )
+
+    @_(
+        "name ASSG expr", # Asignment operators are to
+        "name ADDASSG expr",
+        "name SUBASSG expr",
+        "name MULASSG expr",
+        "name DIVASSG expr",
+        "name MODASSG expr",
+        "name FLOORASSG expr"
+    )
+    def expr(self,v):
+        return (
+            'assign',
+            v[0],
+            v[1],
+            v[2]
+        )
+    
+
+
+    
+    
+    
+    
+    
+    # A rule for parentheses
+    @_("LPAREN expr RPAREN")
+    def expr(self,v):
+        return ("group-expr",v[1])
+    
+
+    
+    
+    
+    
+    

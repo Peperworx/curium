@@ -56,4 +56,5 @@ if True:
     COMMA = ""
     SEMICOLON = ""
     COLON = ""
+    RETURN = ""
 
