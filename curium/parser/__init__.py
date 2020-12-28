@@ -23,10 +23,12 @@ class Parse(SLYParser):
             NAME,
             RETURN,
             LPAREN,
-            RPAREN
+            RPAREN,
+            
         ),(
             "left", 
-            COMMA
+            COMMA,
+            SEMICOLON
         ),("right",
             ASSG,
             ADDASSG,
@@ -81,21 +83,40 @@ class Parse(SLYParser):
         )
     )
 
-    
-    
 
     
+
+    @_("expr SEMICOLON expr")
+    def expr(self,v):
+        return (
+            'expression-list', 
+            v[0],
+            v[1]
+        )
+    @_("expr SEMICOLON")
+    def expr(self,v):
+        return (
+            'statement',
+            v[0]
+        )
     
+    # Return statement
+    @_("RETURN expr")
+    def expr(self,v):
+        return (
+            'return',
+            v[1]
+        )
     
     # Assignment initialization
     @_(
-        "expr COLON NAME ASSG expr SEMICOLON",
-        "expr COLON NAME ADDASSG expr SEMICOLON",
-        "expr COLON NAME SUBASSG expr SEMICOLON",
-        "expr COLON NAME MULASSG expr SEMICOLON",
-        "expr COLON NAME FLOORASSG expr SEMICOLON",
-        "expr COLON NAME DIVASSG expr SEMICOLON",
-        "expr COLON NAME MODASSG expr SEMICOLON"
+        "expr COLON NAME ASSG expr",
+        "expr COLON NAME ADDASSG expr",
+        "expr COLON NAME SUBASSG expr",
+        "expr COLON NAME MULASSG expr",
+        "expr COLON NAME FLOORASSG expr",
+        "expr COLON NAME DIVASSG expr",
+        "expr COLON NAME MODASSG expr"
     )
     def expr(self,v):
         return (
@@ -108,13 +129,13 @@ class Parse(SLYParser):
     
     # Variable assignment
     @_(
-        "expr ASSG expr SEMICOLON",
-        "expr ADDASSG expr SEMICOLON",
-        "expr SUBASSG expr SEMICOLON",
-        "expr MULASSG expr SEMICOLON",
-        "expr FLOORASSG expr SEMICOLON",
-        "expr DIVASSG expr SEMICOLON",
-        "expr MODASSG expr SEMICOLON"
+        "expr ASSG expr",
+        "expr ADDASSG expr",
+        "expr SUBASSG expr",
+        "expr MULASSG expr",
+        "expr FLOORASSG expr",
+        "expr DIVASSG expr",
+        "expr MODASSG expr"
     )
     def expr(self,v):
         return (
@@ -126,7 +147,7 @@ class Parse(SLYParser):
 
     # Variable initialization
     @_(
-        "expr COLON NAME SEMICOLON"
+        "expr COLON NAME"
     )
     def expr(self,v):
         return (
@@ -136,7 +157,7 @@ class Parse(SLYParser):
         )
 
     
-    @_("NAME LPAREN RPAREN SEMICOLON")
+    @_("NAME LPAREN RPAREN")
     def expr(self,v):
         return (
             'function-call',
@@ -146,7 +167,7 @@ class Parse(SLYParser):
             )
         )
     
-    @_("NAME LPAREN expr RPAREN SEMICOLON")
+    @_("NAME LPAREN expr RPAREN")
     def expr(self,v):
         return (
             'function-call',
@@ -224,6 +245,20 @@ class Parse(SLYParser):
             v[0]
         )
 
+    
+
+    @_(
+        "HEXIDECIMAL",
+        "DECIMAL",
+        "BINARY",
+        "OCTAL"
+    )
+    def ltype(self,v):
+        return (
+            "integer-literal",
+            v[0]
+        )
+    
     # Function type
     @_('LPAREN expr RPAREN LBRACE expr RBRACE')
     def ltype(self,v):
@@ -239,18 +274,6 @@ class Parse(SLYParser):
             'function-type',
             ('empty-type'),
             v[4]
-        )
-
-    @_(
-        "HEXIDECIMAL",
-        "DECIMAL",
-        "BINARY",
-        "OCTAL"
-    )
-    def ltype(self,v):
-        return (
-            "integer-literal",
-            v[0]
         )
     
     @_('STRING')
@@ -291,7 +314,7 @@ class Parse(SLYParser):
         print(
             f'|{" " * (col - 1)}{"^" * len(t.value)}'
         )
-        print(f"| Syntax error at line {t.lineno} col {col}:")
+        print(f"| Syntax error at line {t.lineno} col {col-1}:")
         print(f"| \tUnexpected token \"{t.value}\"")
         print("|\n")
         

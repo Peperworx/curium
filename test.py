@@ -1,6 +1,7 @@
 from curium import preprocessor
 from curium import parser
 from curium import lexer
+from rich.console import Console
 import json
 
 
@@ -40,7 +41,9 @@ def test_file(filename: str,result: str):
     parse = parser.Parse()
     parse.text = out
     parsed = parse.parse(lexed)
-    print(parsed)
+    console = Console()
+    
+    console.log(parsed)
 
 if __name__ == "__main__":
     # Limiting to the first one right now
