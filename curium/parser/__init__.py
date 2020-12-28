@@ -91,15 +91,15 @@ class Parse(SLYParser):
         return (
             'expression-list', 
             v[0],
-            v[1]
+            v[2]
         )
+    
     @_("expr SEMICOLON")
     def expr(self,v):
         return (
             'statement',
             v[0]
         )
-    
     # Return statement
     @_("RETURN expr")
     def expr(self,v):
@@ -272,8 +272,8 @@ class Parse(SLYParser):
     def ltype(self,v):
         return (
             'function-type',
-            ('empty-type'),
-            v[4]
+            ('empty-type',),
+            v[3]
         )
     
     @_('STRING')
