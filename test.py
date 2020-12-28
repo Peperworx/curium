@@ -41,12 +41,15 @@ def test_file(filename: str,result: str):
     parse = parser.Parse()
     parse.text = out
     parsed = parse.parse(lexed)
-    console = Console()
     
-    console.log(parsed)
+    # Now save the parsedump
+    parsedump = json.dumps(parsed, indent=4)
+
+    with open(filename+".parsedump","w+") as f:
+        f.write(parsedump)
 
 if __name__ == "__main__":
     # Limiting to the first one right now
-    for i in range(1):
+    for i in range(2):
         test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
     
