@@ -8,6 +8,7 @@ authors = ["Riley Wilton <meetingprince34@outlook.com>"]
 python = "^3.9"
 toml = "^0.10.2"
 sly = "^0.4"
+pydantic = "^1.7.3"
 
 [tool.poetry.dev-dependencies]
 

@@ -57,4 +57,4 @@ if True:
     SEMICOLON = ""
     COLON = ""
     RETURN = ""
-
+    NEWLINE = ""

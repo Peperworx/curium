@@ -1,4 +1,5 @@
 from curium import preprocessor
+from curium import assembler
 from curium import parser
 from curium import lexer
 from rich.console import Console
@@ -48,8 +49,41 @@ def test_file(filename: str,result: str):
     with open(filename+".parsedump","w+") as f:
         f.write(parsedump)
 
-if __name__ == "__main__":
-    # Limiting to the first one right now
-    for i in range(2):
-        test_file(f"tests/test{i}.cm",f"tests/test{i}.cm.res")
+
+def test_asm_file(file: str):
+    lex = assembler.lexer.Lex()
+
+    # Read the contents
+    with open(file) as f:
+        out = f.read()
     
+    # Tokenize it
+    tok = lex.tokenize(out)
+
+    # Convert tokenized to a list
+    toklist = [
+        {
+            "type":l.type,
+            "value":l.value,
+            "lineno":l.lineno,
+            "index":l.index,
+            "column":lexer.find_column(out,l)-1 # Remove one so that it starts at 1
+        } for l in tok
+        ]
+
+    # Save to a lexdump file
+    with open(file + ".lexdump", "w+") as f:
+        f.write(json.dumps(toklist, indent=4))
+
+    # Parse it
+    parser = assembler.parser.Parse()
+    parser.text = out
+    parsed = parser.parse(tok)
+
+if __name__ == "__main__":
+    for i in range(2):
+        test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
+    
+    # Testing assembler
+    for i in range(1):
+        test_asm_file(f"tests/asm/test{i}.casm")
