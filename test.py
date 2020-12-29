@@ -51,34 +51,15 @@ def test_file(filename: str,result: str):
 
 
 def test_asm_file(file: str):
-    lex = assembler.lexer.Lex()
-
     # Read the contents
     with open(file) as f:
         out = f.read()
-    
-    # Tokenize it
-    tok = lex.tokenize(out)
-
-    # Convert tokenized to a list
-    toklist = [
-        {
-            "type":l.type,
-            "value":l.value,
-            "lineno":l.lineno,
-            "index":l.index,
-            "column":lexer.find_column(out,l)-1 # Remove one so that it starts at 1
-        } for l in tok
-        ]
-
-    # Save to a lexdump file
-    with open(file + ".lexdump", "w+") as f:
-        f.write(json.dumps(toklist, indent=4))
 
     # Parse it
-    parser = assembler.parser.Parse()
-    parser.text = out
-    parsed = parser.parse(tok)
+    parser = assembler.Parser()
+    parsed = parser.parse(out)
+
+    print(parsed)
 
 if __name__ == "__main__":
     for i in range(2):
