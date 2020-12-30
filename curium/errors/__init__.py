@@ -32,3 +32,6 @@ class CuriumParseError:
 
         # And the message
         ec.print(f"| \t{message}")
+
+
+

@@ -64,7 +64,9 @@ def test_asm_file(file: str):
     with open(file+".pegdump", "w+") as f:
         f.write(json.dumps(parsed, indent=4))
 
-    print(parsed)
+    # Assemble it
+    asm = assembler.Assembler()
+    asmed = asm.assemble(parsed)
 
 if __name__ == "__main__":
     for i in range(2):

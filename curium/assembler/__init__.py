@@ -1,4 +1,5 @@
 from rich.console import Console
+from pydantic import BaseModel
 from rich import print
 from .. import errors
 import parsimonious
@@ -159,12 +160,55 @@ class Parser:
 
 
 
+
+
+class Opcode(BaseModel):
+    name: str
+    opcode: int
+    function: int
+    numargs: int
+
 class Assembler:
-    def __init__(self):
-        pass
+    opcodes: list[Opcode] = [
+        Opcode(
+            name = "mov",
+            opcode = 0x00,
+            function = 0x00,
+            numargs = 2
+        ),
+        Opcode(
+            name = "print",
+            opcode = 0x01,
+            function = 0x00,
+            numargs = -1
+        ),
+    ]
+    def __init__(self,opcodes=[]):
+        self.opcodes += opcodes
     
     def _encode_instruction(self,instruction):
-        pass
+        output = bytearray()
+
+        # First Lets find the opcode
+        opname = instruction[1]
+
+        fopcode = None
+
+        for opcode in self.opcodes:
+            if opcode.name == opname:
+                fopcode = opcode
+                break
+        
+        # If we found it, great!
+        # If not, we need to throw an error
+        if not fopcode:
+            print(f"Opcode not found: f{opname}")
+            sys.exit(2)
+        
+        print(fopcode)
+
+
+        return bytes()
 
     def assemble(self,input):
 
@@ -189,4 +233,6 @@ class Assembler:
                 # If it is a label
                 # Append the offset to the label table
                 labeldict[inst[1]] = fpoffset
-            
+            if inst[0] == "instruction":
+                # If it is an instruction, append its calculated size to fpoffset
+                fpoffset += len(self._encode_instruction(inst))
