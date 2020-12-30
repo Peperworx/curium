@@ -1,2 +1,4 @@
 label1:
-    mov 0x12, 0x1000
+    mov [0x12], 0x1000
+    print "Hello, World!"
+    mov [label1], "test"

@@ -3,6 +3,7 @@ from curium import assembler
 from curium import parser
 from curium import lexer
 from rich.console import Console
+from rich import print
 import json
 
 
@@ -58,6 +59,10 @@ def test_asm_file(file: str):
     # Parse it
     parser = assembler.Parser()
     parsed = parser.parse(out)
+
+    # Dump it
+    with open(file+".pegdump", "w+") as f:
+        f.write(json.dumps(parsed, indent=4))
 
     print(parsed)
 

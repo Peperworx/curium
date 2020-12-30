@@ -1,8 +1,8 @@
-FILE = (instruction/label)*
+line = instruction/label
 
-label           = ~" *" name ~" *" ":" ~" *" ~"\\n*"
+label           = ~" *" name ~" *" ":" ~" *"
 
-instruction     = ~" *" opcode ~" +" arglist ~"\\n*"
+instruction     = ~" *" opcode ~" +" arglist
 
 opcode          = (name/integerliteral)
 
