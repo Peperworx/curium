@@ -272,9 +272,28 @@ class Assembler:
         # Dump the function/numargs
         output += int.to_bytes((fopcode.function<<4)|len(arguments),1,"little")
 
-        
-
-        print(output)
+        # Dump the arguments
+        for arg in arguments:
+            print(arg)
+            if arg[0] == 'pointer-type-label':
+                typ = 0x0
+                # Now lets validate the label
+                # Adding default value if the key does not exist
+                value = defaultLabel
+                argl=2
+                if arg[1] in labels.keys():
+                    value = labels[arg[1]]
+            elif arg[0] == 'integer-type':
+                typ = 0x1
+                argl = len(hex(arg[1]))
+                # even it out
+                argl = argl if argl % 2 == 0 else argl+1
+                argl //= 2
+                value = int.to_bytes(arg[1],argl,"little")
+            elif arg[0] == 'string-type':
+                typ = 0x2
+                argl = len(arg[1])
+                value = bytes(arg[1].encode())
         return bytes(output)
 
     def assemble(self,input):
