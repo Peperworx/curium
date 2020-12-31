@@ -30,7 +30,7 @@ class Parser:
         for i,line in enumerate(lines):
             # Parse the line
             parsed_line = self.grammar.parse(line)
-
+            
             # Get the instruction
             child = parsed_line.children[0]
 
@@ -43,6 +43,12 @@ class Parser:
                 output += [
                     (
                         "label",
+                        (
+                            i,
+                            child.full_text,
+                            child.start,
+                            child.end
+                        ),
                         label_name
                     )
                 ]
@@ -54,13 +60,21 @@ class Parser:
 
             # Get the instruction name
             instruction_name = child.children[1].text
-
+            
             # Resolve the argument list
-            arglist = self._resolve_arglist(child.children[3],i)
+            arglist = self._resolve_arglist(child.children[2],i)
             
             # Resolve the instruction
             instruction = (
                 "instruction",
+                (
+                    i,
+                    child.full_text,
+                    child.start,
+                    child.end,
+                    child.children[1].start,
+                    child.children[1].end
+                ),
                 instruction_name,
                 arglist
             )
@@ -96,17 +110,21 @@ class Parser:
         return output
 
     def _resolve_arglist(self,arglist,lineno):
+        
         # Output list
         output = []
-
         # Get error handler ready
         parserError = errors.CuriumParseError("Internal parser error")
-
+        if not arglist.text.strip():
+            return tuple([])
+        # Lets get up a few levels
+        arglist = arglist.children[0].children[1]
+        
         # For every argument
-        for argument in arglist.children:
+        for argument in arglist.children[0]:
             # Get the value
             value = argument.children[0].children[0]
-
+            
             # If it is an integer literal, resolve
             if value.expr.name == "integerliteral":
                 value = self._resolve_integer(value.text,value,lineno)
@@ -154,7 +172,7 @@ class Parser:
                 sys.exit(1)
 
             output.append(value)
-    
+        
         return tuple(output)
 
 
@@ -167,6 +185,7 @@ class Opcode(BaseModel):
     opcode: int
     function: int
     numargs: int
+    argnames: list[str]
 
 class Assembler:
     opcodes: list[Opcode] = [
@@ -174,23 +193,25 @@ class Assembler:
             name = "mov",
             opcode = 0x00,
             function = 0x00,
-            numargs = 2
+            numargs = 2,
+            argnames = ["dest","src"]
         ),
         Opcode(
             name = "print",
             opcode = 0x01,
             function = 0x00,
-            numargs = -1
+            numargs = -1,
+            argnames = ["input"]
         ),
     ]
     def __init__(self,opcodes=[]):
         self.opcodes += opcodes
     
-    def _encode_instruction(self,instruction):
+    def _encode_instruction(self,instruction,labels={},defaultLabel=0x000):
         output = bytearray()
 
         # First Lets find the opcode
-        opname = instruction[1]
+        opname = instruction[2]
 
         fopcode = None
 
@@ -202,13 +223,59 @@ class Assembler:
         # If we found it, great!
         # If not, we need to throw an error
         if not fopcode:
-            print(f"Opcode not found: f{opname}")
+            opcodeNotFound = errors.CuriumParseError("Invalid opcode")
+            opcodeNotFound.raiseExec(
+                f"Opcode [i]{opname}[/i] is not a valid opcode",
+                instruction[1][1],
+                instruction[1][0],
+                instruction[1][4],
+                instruction[1][5]
+            )
             sys.exit(2)
         
-        print(fopcode)
+        # Verify the number of arguments
+        if fopcode.numargs < len(instruction[3]) and fopcode.numargs >= 0:
+            tooManyArguments = errors.CuriumParseError("Too many arguments")
+            tooManyArguments.raiseExec(
+                f"Opcode {fopcode.name} is unable to take more than {fopcode.numargs} arguments",
+                instruction[1][1],
+                instruction[1][0],
+                instruction[1][5]+1,
+                len(instruction[1][1].rstrip())-1
+            )
+            sys.exit(2)
+        if fopcode.numargs > len(instruction[3]) and fopcode.numargs >= 0:
+            notEnoughArguments = errors.CuriumParseError("Not enough arguments")
+            notEnoughArguments.raiseExec(
+                f"Opcode {fopcode.name} is missing argument{'s' if len(instruction[3]) - fopcode.numargs > 1 else ''} [i]{','.join(fopcode.argnames[len(instruction[3]):])}[/i]",
+                instruction[1][1],
+                instruction[1][0],
+                instruction[1][4],
+                instruction[1][3]
+            )
+            sys.exit(2)
 
+        # At this point, the instruction matches
+        # So lets generate it
 
-        return bytes()
+        print(instruction)
+
+        # The opcode
+        opcode = fopcode.opcode
+
+        # The arguments
+        arguments = instruction[3]
+
+        # Dump the opcode
+        output += int.to_bytes(opcode,1,"little")
+
+        # Dump the function/numargs
+        output += int.to_bytes((fopcode.function<<4)|len(arguments),1,"little")
+
+        
+
+        print(output)
+        return bytes(output)
 
     def assemble(self,input):
 

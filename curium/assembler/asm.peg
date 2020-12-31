@@ -1,8 +1,8 @@
-line = instruction/label
+line = label/instruction
 
 label           = ~" *" name ~" *" ":" ~" *"
 
-instruction     = ~" *" opcode ~" +" arglist
+instruction     = ~" *" opcode ((~" +" (arglist / ~" *"))/~" *")
 
 opcode          = (name/integerliteral)
 
