@@ -1,4 +1,3 @@
-from os import stat
 
 
 class expr:
@@ -9,7 +8,12 @@ class empty_expr(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('empty-expr', (self.lineno,self.index))
+        return {
+            "tokname": "empty-expression",
+            "type": "expression",
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 class statement:
     pass
@@ -19,7 +23,12 @@ class empty_statement(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('empty-statement',(self.lineno,self.index))
+        return {
+            "tokname": "empty-statement",
+            "type": "statement",
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 class expr_statement(statement):
     def __init__(self, value: expr, lineno: int, index: int):
@@ -30,7 +39,16 @@ class expr_statement(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('expr-statement',self.value.resolve(),(self.lineno,self.index))
+        return {
+            "tokname": "expression-statement",
+            "type": "statement",
+            "value": self.value.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
+
+
 class namespace(expr):
     def __init__(self,
             statements: list[statement]):
@@ -38,7 +56,12 @@ class namespace(expr):
         self.statements = statements
         
     def resolve(self):
-        return ('namespace', [s.resolve() for s in self.statements])
+        return {
+            "tokname": "namespace",
+            "type": "expression",
+            "statements": [s.resolve() for s in self.statements]
+        }
+
         
 
 
@@ -62,7 +85,16 @@ class binary_op(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('binary-op',self.op, self.left.resolve(), self.right.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "binary-op",
+            "type": "expression",
+            "left": self.left.resolve(),
+            "right": self.right.resolve(),
+            "op": self.op,
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
 
 class unary_op(expr):
     def __init__(self, 
@@ -82,7 +114,15 @@ class unary_op(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('unary-op',self.op, self.operand.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "unary-op",
+            "type": "expression",
+            "op": self.op,
+            "operand": self.operand.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
 
 class function_call(expr):
     def __init__(self, 
@@ -101,7 +141,15 @@ class function_call(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('function-call',self.name.resolve(), self.arguments.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "function-call",
+            "type": "expression",
+            "name": self.name.resolve(),
+            "arguments": self.arguments.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
 
 class function_literal(expr):
     def __init__(self,
@@ -120,7 +168,14 @@ class function_literal(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('function-literal', self.arguments.resolve(), self.contents.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "function-literal",
+            "type": "literal-expression",
+            "arguments": self.arguments.resolve(),
+            "contents": self.contents.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 
 class integer_literal(expr):
@@ -136,7 +191,13 @@ class integer_literal(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('integer-literal',self.value, (self.lineno,self.index))
+        return {
+            "tokname": "integer-literal",
+            "type": "literal-expression",
+            "value": self.value,
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 
 class string_literal(expr):
@@ -152,7 +213,13 @@ class string_literal(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('string-literal', self.value, (self.lineno,self.index))
+        return {
+            "tokname": "string-literal",
+            "type": "literal-expression",
+            "value": self.value,
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 class name_literal(expr):
     def __init__(self,
@@ -171,7 +238,14 @@ class name_literal(expr):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('name-literal', self.value, self.annotation.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "name-literal",
+            "type": "literal-expression",
+            "value": self.value,
+            "annotation": self.annotation.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
 
 class var_initialize(statement):
     def __init__(self, 
@@ -190,10 +264,15 @@ class var_initialize(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('var-init',
-            self.var_type.resolve(),
-            self.name.resolve(),
-            (self.lineno,self.index))
+        return {
+            "tokname": "var-init",
+            "type": "statement",
+            "var-type": self.var_type.resolve(),
+            "name": self.name.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+        
 
 class var_assign(statement):
     def __init__(self,
@@ -216,11 +295,16 @@ class var_assign(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('var-assign',
-            self.name.resolve(),
-            self.value.resolve(),
-            self.op 
-            (self.lineno,self.index))
+        return {
+            "tokname": "var-assg",
+            "type": "statement",
+            "name": self.name.resolve(),
+            "value": self.value.resolve(),
+            "op": self.op,
+            "lineno": self.lineno,
+            "index": self.index
+        }
+        
 
 class var_init_assg(statement):
     def __init__(self,
@@ -247,12 +331,17 @@ class var_init_assg(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('var-init-assg',
-            self.var_type.resolve(), 
-            self.name.resolve(),
-            self.value.resolve(),
-            self.op,
-            (self.lineno,self.index))
+        return {
+            "tokname": "var-init-assg",
+            "type": "statement",
+            "var-type": self.var_type.resolve(),
+            "name": self.name.resolve(),
+            "value": self.value.resolve(),
+            "op": self.op,
+            "lineno": self.lineno,
+            "index": self.index
+        }
+        
 
 
 class return_statement(statement):
@@ -264,4 +353,11 @@ class return_statement(statement):
         self.lineno = lineno
         self.index = index
     def resolve(self):
-        return ('return-statement',self.value.resolve(), (self.lineno,self.index))
+        return {
+            "tokname": "return",
+            "type": "statement",
+            "value": self.value.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+        

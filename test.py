@@ -43,7 +43,7 @@ def test_file(filename: str,result: str):
     parse = parser.Parse()
     parse.text = out
     parsed = parse.parse(lexed)
-    print(parsed.resolve())
+    
     # Now save the parsedump
     parsedump = json.dumps(parsed.resolve(), indent=4)
 
