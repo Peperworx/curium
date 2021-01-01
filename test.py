@@ -69,9 +69,9 @@ def test_asm_file(file: str):
     asmed = asm.assemble(parsed)
 
 if __name__ == "__main__":
-    for i in range(2):
+    for i in range(1):
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
     # Testing assembler
-    for i in range(1):
-        test_asm_file(f"tests/asm/test{i}.casm")
+    #for i in range(1):
+    #    test_asm_file(f"tests/asm/test{i}.casm")

@@ -186,7 +186,8 @@ class Parse(SLYParser):
         "INC expr %prec INCP",
         "DEC expr %prec DECP",
         "ADD expr %prec UPLUS",
-        "SUB expr %prec UMIN"
+        "SUB expr %prec UMIN",
+        "LNOT expr"
     )
     def expr(self,v):
         return tree.unary_op(
@@ -222,7 +223,16 @@ class Parse(SLYParser):
             v.lineno,
             v.index)
 
-    
+    # String literals
+    @_("STRING")
+    def expr(self,v):
+        return tree.string_literal(
+            v[0],
+            v.lineno,
+            v.index
+        )
+
+
     ## Here comes the fun part! Names.
 
     @_("name")
@@ -249,14 +259,25 @@ class Parse(SLYParser):
     
 
     # Function types
-    @_("tuple_literal namespace")
+    @_("LPAREN expr RPAREN namespace")
     def expr(self,v):
         return tree.function_literal(
-            v[0],
             v[1],
+            v[3],
             v.lineno,
             v.index
         )
+
+    @_("LPAREN RPAREN namespace")
+    def expr(self,v):
+        return tree.function_literal(
+            tree.empty_statement(),
+            v[2],
+            v.lineno,
+            v.index
+        )
+
+
 
     # Now for namespaces
     @_("LBRACE RBRACE")
@@ -275,27 +296,27 @@ class Parse(SLYParser):
             v.index
         )
 
-    # And for tuples
-    @_("LPAREN tuple RPAREN")
-    def tuple_literal(self,v):
-        return v[1]
-    @_("LPAREN RPAREN")
-    def tuple_literal(self,v):
-        return tree.empty_expr()
-
-    @_(
-        "expr COMMA expr",
-        "expr COMMA tuple",
-        "tuple COMMA tuple",
-        "tuple COMMA expr")
-    def tuple(self,v):
-        return tree.binary_op(
-            v[1],
+    
+    
+    # Function calls
+    @_("name LPAREN expr RPAREN")
+    def expr(self, v):
+        return tree.function_call(
             v[0],
             v[2],
             v.lineno,
             v.index
         )
+
+    @_("name LPAREN RPAREN")
+    def expr(self, v):
+        return tree.function_call(
+            v[0],
+            tree.empty_expr(),
+            v.lineno,
+            v.index
+        )
+    
 
     def find_column(self, text, token):
         last_cr = text.rfind('\n', 0, token.index)

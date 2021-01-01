@@ -118,6 +118,19 @@ class integer_literal(expr):
         self.index = index
 
 
+class string_literal(expr):
+    def __init__(self, 
+            value: str,
+            lineno: int,
+            index: int):
+
+        # Set the value
+        self.value = value
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
+
 class name_literal(expr):
     def __init__(self,
             value: str,
