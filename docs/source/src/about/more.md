@@ -62,3 +62,122 @@ Getting the value from a computed value is the same as calling the function.
 ```cpp
 print(main) // Prints the value of 0x1BADB002
 ```
+
+This is all performed on the compiler step.
+
+Lets now take a loop at the parsing step.
+
+## Parsing
+
+When parsing a file, newlines are ignored between brackets.
+
+This includes function definitions, lists, argument lists, etc.
+
+Every program consists of a list of statements.
+
+The most basic statement is a expression with a semicolon terminating it:
+
+```cpp
+    0+0;
+```
+
+Function calls are also considered expressions:
+
+```cpp
+    function[int]: main = (){
+        return 0;
+    }
+```
+
+This allows functions to be assigned to variables, and even passed to other functions.
+
+```cpp
+funca((){
+    print("This function is passed to funca!");
+}, arg2, arg3, 4, 5, 6, 7);
+```
+
+Function definitions consist of two parts, a tuple of arguments with their type, and a namespace. A tuple looks like this: 
+```cpp
+(val1, val2, valx, ...)
+```
+
+A tuple of arguments looks like this:
+```cpp
+(type: arg1, type: arg2, ...)
+```
+
+Namespaces look like this:
+
+```cpp
+{
+    statement1;
+    statement2;
+    expr();
+}
+```
+
+A namespace is basically a list of statements delimited by semicolons. A namespace in itself is a type, and can be assigned like this:
+
+```cpp
+namespace: namespace_test = {
+    int a;
+    int b;
+    float c;
+    char d;
+}
+```
+
+The scope of a namespace can be accessed using the "::" operator:
+
+```cpp
+print(namespace_test::a);
+```
+
+Sometimes, you want to have instanced namespaces. An example of an instanced namespace is a struct:
+
+```cpp
+struct: struct_test = {
+    int a;
+    int b;
+    float c;
+    char d;
+}
+```
+
+An instanced namespace can have new "versions" of itself created. This can be done by using a instanced namespace as a type:
+
+```cpp
+struct_test: a;
+a.a = 0;
+a.b = 1;
+a.c = 3.14;
+a.d = 'D';
+```
+
+This creates a new version of the namespace in memory, and allows updating of the values for the namespace in that specific location.
+
+Another example of an instanced namespace is a class:
+
+```cpp
+class: class_a = {
+private:
+    int: a;
+public:
+    function[int]: get_a;
+}
+
+class_a::get_a = (){
+    print(a)
+    return a;
+}
+```
+
+Here we notice access modifiers. Every member declared after that, until the next access modifier has that access level. In the previous example we notice that get_a is accessible to the public, but the value of a is private.
+
+We also notice that we can define the value of get_a outside of the class scope. When a program is executing, everything in the global scope is executed, and then the main function is executed. Only variable and function definitions may go in the global scope. Functions may not be called in the global scope.
+
+We use the concept of namespaces, instead of separating class, struct and namespace because it is easier to implement. Classes, structs, and namespaces all have member access. In a function, everything defaults to private access unless otherwise specified. 
+
+## Data types
+
