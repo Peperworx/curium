@@ -1,6 +1,5 @@
 from re import match
 from sly import Parser as SLYParser
-from typing_extensions import IntVar
 from ..lexer.tokens import *
 from ..lexer import Lex
 

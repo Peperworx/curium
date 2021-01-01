@@ -133,3 +133,7 @@ dmypy.json
 *.lexdump
 *.parsedump
 *.pegdump
+
+.vscode
+
+.vscode/*
