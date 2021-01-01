@@ -1,3 +1,8 @@
+---
+tags: []
+created: 2021-01-01T04:06:48.982Z
+modified: 2021-01-01T04:07:13.115Z
+---
 # Details on Curium.
 
 Curium borrows all of the best parts from several languages.
@@ -181,3 +186,27 @@ We use the concept of namespaces, instead of separating class, struct and namesp
 
 ## Data types
 
+The lowest datatype is *`object`*. Every other object is based off the *`object`* type.
+
+There are several functions that objects can implement. These are similar to pythons dunder methods or C++'s operator overloads:
+
+
+These each override the operator specified in their name. Example of overriding ==:
+
+```cpp
+function[bool]: operator(==) = (typename B){
+    return B == this;
+} 
+```
+
+Notice the function name is operator followed by the operator in parentheses.
+
+You may be wondering how default types like integers are implemented.
+
+They simply use inline assembly. For example (on uint64):
+
+```cpp
+function[void]: operator(=) = (uint64 B){
+    __asm__("mov rax, [%1]; mov [%0], qword [rax]", *this.value, *B.value);
+}
+```
