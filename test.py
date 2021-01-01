@@ -43,9 +43,9 @@ def test_file(filename: str,result: str):
     parse = parser.Parse()
     parse.text = out
     parsed = parse.parse(lexed)
-    
+    print(parsed.resolve())
     # Now save the parsedump
-    parsedump = json.dumps(parsed, indent=4)
+    parsedump = json.dumps(parsed.resolve(), indent=4)
 
     with open(filename+".parsedump","w+") as f:
         f.write(parsedump)
@@ -69,7 +69,7 @@ def test_asm_file(file: str):
     asmed = asm.assemble(parsed)
 
 if __name__ == "__main__":
-    for i in range(1):
+    for i in range(2):
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
     # Testing assembler

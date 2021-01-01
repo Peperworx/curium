@@ -279,7 +279,7 @@ class Parse(SLYParser):
     def expr(self, v):
         return tree.function_call(
             v[0],
-            tree.empty_expr(),
+            tree.empty_expr(v.lineno,v.index),
             v.lineno,
             v.index
         )
@@ -295,12 +295,12 @@ class Parse(SLYParser):
     def name(self,v):
         return tree.name_literal(
             v[0],
-            tree.empty_expr(),
+            tree.empty_expr(v.lineno,v.index),
             v.lineno,
             v.index
         )
 
-    @_("NAME LBRACK NAME RBRACK")
+    @_("NAME LBRACK name RBRACK")
     def name(self,v):
         return tree.name_literal(
             v[0],
@@ -323,7 +323,7 @@ class Parse(SLYParser):
     @_("LPAREN RPAREN namespace")
     def expr(self,v):
         return tree.function_literal(
-            tree.empty_statement(),
+            tree.empty_statement(v.lineno,v.index),
             v[2],
             v.lineno,
             v.index
@@ -340,9 +340,7 @@ class Parse(SLYParser):
     
     @_("LBRACE statements RBRACE")
     def namespace(self,v):
-        return tree.namespace(
-            []
-        )
+        return v[1]
 
     
     
