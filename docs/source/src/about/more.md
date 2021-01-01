@@ -210,3 +210,6 @@ function[void]: operator(=) = (uint64 B){
     __asm__("mov rax, [%1]; mov [%0], qword [rax]", *this.value, *B.value);
 }
 ```
+
+
+This language in itself is simply a framework for creating structures, classes, namespaces, and variables in assembly. The entire standard library, including integers and chars, are all implemented using inline assembly.
