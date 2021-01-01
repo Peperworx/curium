@@ -52,3 +52,6 @@ The step 2 compiler will be super similar to the interpreter. It will interpret 
 
 As I said, Curium will use Documentation Driven Devlopment, as (in my opinion) the best way to plan is to have a thorough understanding of how it the end result will work. This will be accomplished by means of a tutorial. As I said above, each step of a tutorial will be a minor version, and each section a major version. Patch versions are for security and bug fixes only.
 You can start the tutorial by going [here](/tutorial/).
+
+## More about this language
+You can find out details [here](/about/more.md)

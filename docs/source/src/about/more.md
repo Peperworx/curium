@@ -1,4 +1,4 @@
-# What makes Curium different?
+# Details on Curium.
 
 Curium borrows all of the best parts from several languages.
 
@@ -40,4 +40,25 @@ function[int]: main = (char arg1, int arg2, string arg3)
 }
 ```
 
-If you do not provide the "function" type, 
+If you do not provide the "function" type and you do not provide any function arguments it is assumed that you are writing a function. This is the same as previous:
+
+```cpp
+int: main = (char arg1, int arg2, string arg3)
+{
+    return 0x1BADB002;
+}
+```
+
+We can also create computed values:
+
+```cpp
+computed[int]: main = (){
+    return 0x1BADB002;
+}
+```
+
+Getting the value from a computed value is the same as calling the function.
+
+```cpp
+print(main) // Prints the value of 0x1BADB002
+```
