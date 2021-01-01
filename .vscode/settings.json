@@ -1,6 +1,0 @@
-{
-    "python.pythonPath": "D:\\Python 39\\python.exe",
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportGeneralTypeIssues": "none"
-    }
-}
