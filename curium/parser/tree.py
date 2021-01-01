@@ -225,6 +225,8 @@ class name_literal(expr):
     def __init__(self,
             value: str,
             annotation: expr,
+            indirection: bool,
+            addr: bool,
             lineno: int,
             index: int):
 
@@ -233,6 +235,10 @@ class name_literal(expr):
 
         # The annotation of the name
         self.annotation = annotation
+
+        # Indirection and addr
+        self.indirection = indirection
+        self.addr = addr
 
         # The linenumber and index
         self.lineno = lineno
@@ -243,6 +249,8 @@ class name_literal(expr):
             "type": "literal-expression",
             "value": self.value,
             "annotation": self.annotation.resolve(),
+            "indirection": self.indirection,
+            "addr": self.addr,
             "lineno": self.lineno,
             "index": self.index
         }
@@ -361,3 +369,32 @@ class return_statement(statement):
             "index": self.index
         }
         
+
+class for_loop(statement):
+    def __init__(self,
+            state1: statement,
+            expr1: expr,
+            state2: statement,
+            contents: namespace,
+            lineno: int,
+            index: int):
+        
+        self.state1 = state1
+        self.expr1 = expr1
+        self.state2 = state2
+
+        self.contents = contents
+
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return {
+            "tokname": "for",
+            "type": "statement",
+            "statement1": self.state1,
+            "expr1": self.expr1,
+            "statement2": self.state2,
+            "contents": self.contents,
+            "lineno": self.lineno,
+            "index": self.index
+        }

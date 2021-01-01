@@ -74,12 +74,14 @@ class Parse(SLYParser):
             UPLUS,
             UMIN,
             LNOT,
-            BOC
+            BOC,
+            INDIRECTION,
+            ADDR
         ), ("left",
            INC,
            DEC,
            # Leave room for function call, subscript, member access
-        )
+        ),
     )
 
     @_("statement SEMICOLON statements")
@@ -123,7 +125,9 @@ class Parse(SLYParser):
     def statement(self, v):
         return tree.var_initialize(
             v[0],
-            v[2]
+            v[2],
+            v.lineno,
+            v.index
         )
     
     # Variable assignment is an expression
@@ -178,7 +182,21 @@ class Parse(SLYParser):
             v.lineno,
             v.index
         )
-    
+
+    # For loop
+    @_(
+        "FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN namespace"
+    )
+    def statement(self,v):
+        return tree.for_loop(
+            v[2],
+            v[4],
+            v[6],
+            v[8],
+            v.lineno,
+            v.index
+        )
+
 
     # Binary operators
     @_(
@@ -291,11 +309,25 @@ class Parse(SLYParser):
     def expr(self, v):
         return v[0]
 
+    @_(
+        "MUL name %prec INDIRECTION",
+        "BAND name %prec ADDR"
+    )
+    def name(self, v):
+        nm = v[1]
+        if v[0] == "*":
+            nm.indirection = True
+        if v[0] == "&":
+            nm.addr = True
+        return nm
+
     @_("NAME")
     def name(self,v):
         return tree.name_literal(
             v[0],
             tree.empty_expr(v.lineno,v.index),
+            False,
+            False,
             v.lineno,
             v.index
         )
@@ -305,6 +337,8 @@ class Parse(SLYParser):
         return tree.name_literal(
             v[0],
             v[2],
+            False,
+            False,
             v.lineno,
             v.index
         )
@@ -330,6 +364,9 @@ class Parse(SLYParser):
         )
 
 
+    @_("namespace")
+    def expr(self, v):
+        return v[0]
 
     # Now for namespaces
     @_("LBRACE RBRACE")

@@ -58,3 +58,5 @@ if True:
     COLON = ""
     RETURN = ""
     NEWLINE = ""
+    INDIRECTION = ""
+    ADDR = ""
