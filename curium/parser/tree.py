@@ -1,9 +1,26 @@
+from os import stat
+
+
 class expr:
     pass
 
+class empty_expr(expr):
+    pass
 
 class statement:
     pass
+
+class empty_statement(statement):
+    pass
+
+class expr_statement(statement):
+    def __init__(self, value: expr, lineno: int, index: int):
+        # Set the expression value
+        self.value = value
+
+        # Lineno and index
+        self.lineno = lineno
+        self.index = index
 
 class namespace(expr):
     def __init__(self,
@@ -87,12 +104,44 @@ class function_literal(expr):
 
 
 
+class integer_literal(expr):
+    def __init__(self, 
+            value: str,
+            lineno: int,
+            index: int):
+
+        # Set the value
+        self.value = value
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
+
+
+class name_literal(expr):
+    def __init__(self,
+            value: str,
+            annotation: expr,
+            lineno: int,
+            index: int):
+
+        # The name of the name
+        self.value = value
+
+        # The annotation of the name
+        self.annotation = annotation
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
 
 
 class var_initialize(statement):
     def __init__(self, 
-            var_type: expr,
-            name: str):
+            var_type: name_literal,
+            name: name_literal,
+            lineno: int,
+            index: int):
 
         # The type of the variable
         self.var_type = var_type
@@ -100,10 +149,17 @@ class var_initialize(statement):
         # The name of the variable
         self.name = name
 
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
+
 class var_assign(statement):
     def __init__(self,
-            name: str,
-            value: expr):
+            name: name_literal,
+            value: expr,
+            op: str,
+            lineno: int,
+            index: int):
         
         # The variable name
         self.name = name
@@ -111,11 +167,21 @@ class var_assign(statement):
         # The new value
         self.value = value
 
+        # The assignment op
+        self.op = op
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
+
 class var_init_assg(statement):
     def __init__(self,
-            var_type: expr,
-            name: str,
-            value: expr):
+            var_type: name_literal,
+            name: name_literal,
+            value: expr,
+            op: str,
+            lineno: int,
+            index: int):
         
         # The variable type
         self.var_type = var_type
@@ -125,5 +191,12 @@ class var_init_assg(statement):
 
         # The variable value
         self.value = value
+
+        # The assignment op
+        self.op = op
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
 
 

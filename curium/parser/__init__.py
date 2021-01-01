@@ -83,139 +83,105 @@ class Parse(SLYParser):
     )
 
 
-    
-
-    @_("expr SEMICOLON expr")
-    def expr(self,v):
-        return (
-            'expression-list', 
-            v[0],
-            v[2]
-        )
+    # The most basic of statements is an expression
+    # followed by a semicolon
     
     @_("expr SEMICOLON")
-    def expr(self,v):
-        return (
-            'statement',
-            v[0]
+    def statement(self, v):
+        return tree.expr_statement(
+            v[0],
+            v.lineno,
+            v.index
         )
-    # Return statement
-    @_("RETURN expr")
-    def expr(self,v):
-        return (
-            'return',
-            v[1]
+
+    # Second most basic is a assignment
+
+    # First variable initialization
+    @_("name COLON name SEMICOLON")
+    def statement(self, v):
+        return tree.var_initialize(
+            v[0],
+            v[2]
         )
     
-    # Assignment initialization
+    # Variable assignment is an expression
     @_(
-        "expr COLON NAME ASSG expr",
-        "expr COLON NAME ADDASSG expr",
-        "expr COLON NAME SUBASSG expr",
-        "expr COLON NAME MULASSG expr",
-        "expr COLON NAME FLOORASSG expr",
-        "expr COLON NAME DIVASSG expr",
-        "expr COLON NAME MODASSG expr"
+        "name ASSG expr",
+        "name ADDASSG expr",
+        "name SUBASSG expr",
+        "name MULASSG expr",
+        "name DIVASSG expr",
+        "name MODASSG expr",
+        "name FLOORASSG expr"
     )
-    def expr(self,v):
-        return (
-            'var-assign-init',
-            v[3],
+    def expr(self, v):
+        return tree.var_assign(
             v[0],
             v[2],
-            v[4]
-        )
-    
-    # Variable assignment
-    @_(
-        "expr ASSG expr",
-        "expr ADDASSG expr",
-        "expr SUBASSG expr",
-        "expr MULASSG expr",
-        "expr FLOORASSG expr",
-        "expr DIVASSG expr",
-        "expr MODASSG expr"
-    )
-    def expr(self,v):
-        return (
-            'var-assign',
             v[1],
-            v[0],
-            v[2]
+            v.lineno,
+            v.index
         )
 
-    # Variable initialization
+    # Assignment and initialization at the same time
     @_(
-        "expr COLON NAME"
+        "name COLON name ASSG expr SEMICOLON",
+        "name COLON name ADDASSG expr SEMICOLON",
+        "name COLON name SUBASSG expr SEMICOLON",
+        "name COLON name MULASSG expr SEMICOLON",
+        "name COLON name DIVASSG expr SEMICOLON",
+        "name COLON name MODASSG expr SEMICOLON",
+        "name COLON name FLOORASSG expr SEMICOLON"
     )
-    def expr(self,v):
-        return (
-            'var-init',
+    def statement(self, v):
+        return tree.var_init_assg(
             v[0],
             v[2],
-        )
-
-    
-    @_("NAME LPAREN RPAREN")
-    def expr(self,v):
-        return (
-            'function-call',
-            v[0],
-            (
-                'empty-expr'
-            )
+            v[4],
+            v[3],
+            v.lineno,
+            v.index
         )
     
-    @_("NAME LPAREN expr RPAREN")
-    def expr(self,v):
-        return (
-            'function-call',
-            v[0],
-            v[2]
-        )
 
+    
+    
 
-
-
-    # Add a rule for every binary operator
+    # Binary operators
     @_(
-        "expr LAND expr", # Logical ops
+        "expr COMMA expr",      # Tuple
+        "expr LAND expr",       # Logical operators
         "expr LOR expr",
-        "expr LNOT expr",
-        "expr BAND expr", # Bitwise ops
+        "expr BAND expr",       # Bitwise operators
         "expr BOR expr",
         "expr BXOR expr",
         "expr BOC expr",
         "expr BLS expr",
         "expr BRS expr",
-        "expr EQU expr", # Comparison operators are binary too
+        "expr EQU expr",        # Compairson operators
         "expr NEQU expr",
         "expr LTGT expr",
         "expr GT expr",
         "expr LT expr",
         "expr GTEQ expr",
         "expr LTEQ expr",
-        
-        "expr ADD expr", # Finaly mathematical operators
+        "expr ADD expr",        # Arithmetic
         "expr SUB expr",
         "expr MUL expr",
         "expr DIV expr",
         "expr MOD expr",
-        "expr FLOORDIV expr" # Thats all for now
+        "expr FLOORDIV expr"
     )
     def expr(self, v):
-        return (
-            "binary-expression",
+        return tree.binary_op(
             v[1],
-            v.expr0,
-            v.expr1
+            v[0],
+            v[2],
+            v.lineno,
+            v.index
         )
-    
-    
-    
-    
-    
-    # Unary operators
+
+    # Unary prefix operators
     @_(
         "INC expr %prec INCP",
         "DEC expr %prec DECP",
@@ -223,81 +189,114 @@ class Parse(SLYParser):
         "SUB expr %prec UMIN"
     )
     def expr(self,v):
-        return (
-            "unary-expr",
+        return tree.unary_op(
             v[0],
-            v[1]
+            v[1],
+            v.lineno,
+            v.index
         )
+
+    # Unary postfix operators
     @_(
-        "LPAREN expr RPAREN"
+        "expr INC",
+        "expr DEC"
     )
     def expr(self,v):
-        return v[1]
-    
-    # Types
-
-
-    @_("ltype","typedName")
-    def expr(self,v):
-        return (
-            'literal',
-            v[0]
+        return tree.unary_op(
+            v[0],
+            v[1],
+            v.lineno,
+            v.index
         )
 
     
-
+    # Integer literals
     @_(
         "HEXIDECIMAL",
-        "DECIMAL",
+        "OCTAL",
         "BINARY",
-        "OCTAL"
+        "DECIMAL"
     )
-    def ltype(self,v):
-        return (
-            "integer-literal",
-            v[0]
-        )
+    def expr(self,v):
+        return tree.integer_literal(v[0],
+            v.lineno,
+            v.index)
+
     
-    # Function type
-    @_('LPAREN expr RPAREN LBRACE expr RBRACE')
-    def ltype(self,v):
-        return (
-            'function-type',
-            v[1],
-            v[4]
-        )
-    # Function type
-    @_('LPAREN RPAREN LBRACE expr RBRACE')
-    def ltype(self,v):
-        return (
-            'function-type',
-            ('empty-type',),
-            v[3]
-        )
-    
-    @_('STRING')
-    def ltype(self,v):
-        return (
-            'string-literal',
-            v[0]
-        )
-    
-    @_("NAME LBRACK typedName RBRACK")
-    def typedName(self,v):
-        return (
-            'typed-name',
-            v[0],
-            v[2]
-        )
-    
+    ## Here comes the fun part! Names.
+
+    @_("name")
+    def expr(self, v):
+        return v[0]
+
     @_("NAME")
-    def typedName(self,v):
-        return (
-            'untyped-name',
-            v[0]
+    def name(self,v):
+        return tree.name_literal(
+            v[0],
+            tree.empty_expr(),
+            v.lineno,
+            v.index
+        )
+
+    @_("NAME LBRACK NAME RBRACK")
+    def name(self,v):
+        return tree.name_literal(
+            v[0],
+            v[2],
+            v.lineno,
+            v.index
         )
     
+
+    # Function types
+    @_("tuple_literal namespace")
+    def expr(self,v):
+        return tree.function_literal(
+            v[0],
+            v[1],
+            v.lineno,
+            v.index
+        )
+
+    # Now for namespaces
+    @_("LBRACE RBRACE")
+    def namespace(self,v):
+        return tree.namespace(
+            [],
+            v.lineno,
+            v.index
+        )
     
+    @_("LBRACE statement RBRACE")
+    def namespace(self,v):
+        return tree.namespace(
+            [],
+            v.lineno,
+            v.index
+        )
+
+    # And for tuples
+    @_("LPAREN tuple RPAREN")
+    def tuple_literal(self,v):
+        return v[1]
+    @_("LPAREN RPAREN")
+    def tuple_literal(self,v):
+        return tree.empty_expr()
+
+    @_(
+        "expr COMMA expr",
+        "expr COMMA tuple",
+        "tuple COMMA tuple",
+        "tuple COMMA expr")
+    def tuple(self,v):
+        return tree.binary_op(
+            v[1],
+            v[0],
+            v[2],
+            v.lineno,
+            v.index
+        )
+
     def find_column(self, text, token):
         last_cr = text.rfind('\n', 0, token.index)
         if last_cr < 0:
@@ -311,7 +310,7 @@ class Parse(SLYParser):
         print("|"+"-"*max(len(line),50))
         print("|",line)
         print(
-            f'|{" " * (col - 1)}{"^" * len(t.value)}'
+            f'|{" " * (col)}{"^" * len(t.value)}'
         )
         print(f"| Syntax error at line {t.lineno} col {col-1}:")
         print(f"| \tUnexpected token \"{t.value}\"")
