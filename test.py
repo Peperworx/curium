@@ -59,7 +59,7 @@ def test_asm_file(file: str):
     # Parse it
     parser = assembler.Parser()
     parsed = parser.parse(out)
-
+    
     # Dump it
     with open(file+".pegdump", "w+") as f:
         f.write(json.dumps(parsed, indent=4))

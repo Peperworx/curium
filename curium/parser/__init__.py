@@ -2,8 +2,8 @@ from re import match
 from sly import Parser as SLYParser
 from ..lexer.tokens import *
 from ..lexer import Lex
-
 from . import tree
+import sys
 
 _ = lambda *v: v
 
@@ -82,22 +82,44 @@ class Parse(SLYParser):
         )
     )
 
+    @_("statement SEMICOLON statements")
+    def statements(self, v):
+        out = [v[0]]
+        out.extend(v[2].statements)
+        return tree.namespace(
+            out
+        )
+    
+    @_("statement SEMICOLON")
+    def statements(self, v):
+        out = [v[0]]
+        return tree.namespace(
+            out
+        )
+    
+    @_("statement")
+    def statements(self,v):
+        out = [v[0]]
+        return tree.namespace(
+            out
+        )
+    
+    
 
     # The most basic of statements is an expression
-    # followed by a semicolon
     
-    @_("expr SEMICOLON")
+    @_("expr")
     def statement(self, v):
         return tree.expr_statement(
             v[0],
-            v.lineno,
-            v.index
+            v[0].lineno,
+            v[0].index
         )
 
     # Second most basic is a assignment
 
     # First variable initialization
-    @_("name COLON name SEMICOLON")
+    @_("name COLON name")
     def statement(self, v):
         return tree.var_initialize(
             v[0],
@@ -125,13 +147,13 @@ class Parse(SLYParser):
 
     # Assignment and initialization at the same time
     @_(
-        "name COLON name ASSG expr SEMICOLON",
-        "name COLON name ADDASSG expr SEMICOLON",
-        "name COLON name SUBASSG expr SEMICOLON",
-        "name COLON name MULASSG expr SEMICOLON",
-        "name COLON name DIVASSG expr SEMICOLON",
-        "name COLON name MODASSG expr SEMICOLON",
-        "name COLON name FLOORASSG expr SEMICOLON"
+        "name COLON name ASSG expr",
+        "name COLON name ADDASSG expr",
+        "name COLON name SUBASSG expr",
+        "name COLON name MULASSG expr",
+        "name COLON name DIVASSG expr",
+        "name COLON name MODASSG expr",
+        "name COLON name FLOORASSG expr"
     )
     def statement(self, v):
         return tree.var_init_assg(
@@ -144,7 +166,18 @@ class Parse(SLYParser):
         )
     
 
-    
+    # Builtin statements
+
+    # First return
+    @_(
+        "RETURN expr"
+    )
+    def statement(self, v):
+        return tree.return_statement(
+            v[1],
+            v.lineno,
+            v.index
+        )
     
 
     # Binary operators
@@ -232,6 +265,25 @@ class Parse(SLYParser):
             v.index
         )
 
+    # Function calls
+    @_("expr LPAREN expr RPAREN")
+    def expr(self, v):
+        return tree.function_call(
+            v[0],
+            v[2],
+            v.lineno,
+            v.index
+        )
+
+    @_("expr LPAREN RPAREN")
+    def expr(self, v):
+        return tree.function_call(
+            v[0],
+            tree.empty_expr(),
+            v.lineno,
+            v.index
+        )
+
 
     ## Here comes the fun part! Names.
 
@@ -283,39 +335,18 @@ class Parse(SLYParser):
     @_("LBRACE RBRACE")
     def namespace(self,v):
         return tree.namespace(
-            [],
-            v.lineno,
-            v.index
+            []
         )
     
-    @_("LBRACE statement RBRACE")
+    @_("LBRACE statements RBRACE")
     def namespace(self,v):
         return tree.namespace(
-            [],
-            v.lineno,
-            v.index
+            []
         )
 
     
     
-    # Function calls
-    @_("name LPAREN expr RPAREN")
-    def expr(self, v):
-        return tree.function_call(
-            v[0],
-            v[2],
-            v.lineno,
-            v.index
-        )
-
-    @_("name LPAREN RPAREN")
-    def expr(self, v):
-        return tree.function_call(
-            v[0],
-            tree.empty_expr(),
-            v.lineno,
-            v.index
-        )
+    
     
 
     def find_column(self, text, token):
@@ -326,16 +357,21 @@ class Parse(SLYParser):
         return column
     
     def error(self,t):
-        col = self.find_column(self.text,t)
-        line = self.text.split("\n")[t.lineno-1]
-        print("|"+"-"*max(len(line),50))
-        print("|",line)
-        print(
-            f'|{" " * (col)}{"^" * len(t.value)}'
-        )
-        print(f"| Syntax error at line {t.lineno} col {col-1}:")
-        print(f"| \tUnexpected token \"{t.value}\"")
-        print("|\n")
+        if t:
+            col = self.find_column(self.text,t)
+            line = self.text.split("\n")[t.lineno-1]
+            print("|"+"-"*max(len(line),50))
+            print("|",line)
+            print(
+                f'|{" " * (col)}{"^" * len(t.value)}'
+            )
+            print(f"| Syntax error at line {t.lineno} col {col-1}:")
+            print(f"| \tUnexpected token \"{t.value}\"")
+            print("|\n")
+        else:
+            print("|"+"-"*50)
+            print("| End of file error")
+        sys.exit()
         
 
     

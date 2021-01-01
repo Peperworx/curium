@@ -130,6 +130,8 @@ class string_literal(expr):
         # The linenumber and index
         self.lineno = lineno
         self.index = index
+    def resolve(self):
+        return ('string-literal', self.value, (self.lineno,self.index))
 
 class name_literal(expr):
     def __init__(self,
@@ -147,7 +149,8 @@ class name_literal(expr):
         # The linenumber and index
         self.lineno = lineno
         self.index = index
-
+    def resolve(self):
+        return ('name-literal', self.value, self.annotation, (self.lineno,self.index))
 
 class var_initialize(statement):
     def __init__(self, 
@@ -165,6 +168,11 @@ class var_initialize(statement):
         # The linenumber and index
         self.lineno = lineno
         self.index = index
+    def resolve(self):
+        return ('var-init',
+            self.var_type,
+            self.name,
+            (self.lineno,self.index))
 
 class var_assign(statement):
     def __init__(self,
@@ -186,6 +194,12 @@ class var_assign(statement):
         # The linenumber and index
         self.lineno = lineno
         self.index = index
+    def resolve(self):
+        return ('var-assign',
+            self.name,
+            self.value,
+            self.op 
+            (self.lineno,self.index))
 
 class var_init_assg(statement):
     def __init__(self,
@@ -211,5 +225,22 @@ class var_init_assg(statement):
         # The linenumber and index
         self.lineno = lineno
         self.index = index
+    def resolve(self):
+        return ('var-init-assg',
+            self.var_type, 
+            self.name,
+            self.value,
+            self.op
+            (self.lineno,self.index))
 
 
+class return_statement(statement):
+    def __init__(self, value: expr, lineno:int, index: int):
+        # The value
+        self.value = value
+
+        # The linenumber and index
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return ('return-statement',self.value, (self.lineno,self.index))
