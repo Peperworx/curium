@@ -391,10 +391,133 @@ class for_loop(statement):
         return {
             "tokname": "for",
             "type": "statement",
-            "statement1": self.state1,
-            "expr1": self.expr1,
-            "statement2": self.state2,
-            "contents": self.contents,
+            "statement1": self.state1.resolve(),
+            "expr1": self.expr1.resolve(),
+            "statement2": self.state2.resolve(),
+            "contents": self.contents.resolve(),
             "lineno": self.lineno,
             "index": self.index
+        }
+
+class while_loop(statement):
+    def __init__(self,
+            exp: expr,
+            contents: namespace,
+            lineno: int,
+            index: int):
+        
+        self.expr = exp
+
+        self.contents = contents
+
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return {
+            "tokname": "for",
+            "type": "statement",
+            "expr": self.expr.resolve(),
+            "contents": self.contents.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
+
+class if_conditional(statement):
+    def __init__(self,
+            conditional: expr,
+            contents: namespace,
+            lineno: int,
+            index: int):
+        
+        self.conditional = conditional
+
+        self.contents = contents
+
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return {
+            "tokname": "if",
+            "type": "statement",
+            "conditional": self.conditional.resolve(),
+            "contents": self.contents.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
+
+class elif_conditional(statement):
+    def __init__(self,
+            conditional: expr,
+            contents: namespace,
+            lineno: int,
+            index: int):
+        
+        self.conditional = conditional
+
+        self.contents = contents
+
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return {
+            "tokname": "elif",
+            "type": "statement",
+            "conditional": self.conditional.resolve(),
+            "contents": self.contents.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
+class else_conditional(statement):
+    def __init__(self,
+            contents: namespace,
+            lineno: int,
+            index: int):
+
+        self.contents = contents
+
+        self.lineno = lineno
+        self.index = index
+    def resolve(self):
+        return {
+            "tokname": "else",
+            "type": "statement",
+            "contents": self.contents.resolve(),
+            "lineno": self.lineno,
+            "index": self.index
+        }
+
+class elif_chain(expr):
+    def __init__(self,
+            statements: list[statement]):
+        # The actual list of statements
+        self.statements = statements
+        
+    def resolve(self):
+        return {
+            "tokname": "elif-chain",
+            "type": "expression",
+            "statements": [s.resolve() for s in self.statements]
+        }
+
+
+
+class conditional(statement):
+    def __init__(self,
+            ifconditional: if_conditional,
+            elifconditional: elif_chain,
+            elseconditional: else_conditional):
+        
+        self.ifconditional = ifconditional
+        self.elifconditional = elifconditional
+        self.elseconditional = elseconditional
+    def resolve(self):
+        return {
+            "tokname": "conditional",
+            "type": "statement",
+            "if": self.ifconditional.resolve(),
+            "elif": self.elifconditional.resolve(),
+            "else": self.elseconditional.resolve()
         }

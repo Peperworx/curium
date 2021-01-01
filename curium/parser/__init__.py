@@ -84,6 +84,8 @@ class Parse(SLYParser):
         ),
     )
 
+    # An entire file is a list of statements
+
     @_("statement SEMICOLON statements")
     def statements(self, v):
         out = [v[0]]
@@ -91,20 +93,22 @@ class Parse(SLYParser):
         return tree.namespace(
             out
         )
-    
     @_("statement SEMICOLON")
+    def statements(self, v):
+        out = [v[0], v[1]]
+        return tree.namespace(
+            out
+        )
+    
+    @_("statement")
     def statements(self, v):
         out = [v[0]]
         return tree.namespace(
             out
         )
     
-    @_("statement")
-    def statements(self,v):
-        out = [v[0]]
-        return tree.namespace(
-            out
-        )
+    
+    
     
     
 
@@ -172,13 +176,23 @@ class Parse(SLYParser):
 
     # Builtin statements
 
-    # First return
+    # Return
     @_(
         "RETURN expr"
     )
     def statement(self, v):
         return tree.return_statement(
             v[1],
+            v.lineno,
+            v.index
+        )
+
+    # While loop
+    @_("WHILE LPAREN expr RPAREN namespace")
+    def statement(self,v):
+        return tree.while_loop(
+            v[2],
+            v[4],
             v.lineno,
             v.index
         )
@@ -196,6 +210,85 @@ class Parse(SLYParser):
             v.lineno,
             v.index
         )
+
+    
+
+    # Conditional
+    @_("if_statement")
+    def statement(self,v):
+        return tree.conditional(
+            v[0],
+            tree.elif_chain([]),
+            tree.else_conditional(tree.namespace([]),v.lineno,v.index)
+        )
+    
+    @_("if_statement else_statement")
+    def statement(self,v):
+        return tree.conditional(
+            v[0],
+            tree.elif_chain([]),
+            v[1]
+        )
+    
+    @_("if_statement elif_chain")
+    def statement(self,v):
+        return tree.conditional(
+            v[0],
+            v[1],
+            tree.else_conditional(tree.namespace([]),v.lineno,v.index)
+        )
+    
+    @_("if_statement elif_chain else_statement")
+    def statement(self,v):
+        return tree.conditional(
+            v[0],
+            v[1],
+            v[2],
+        )
+
+    @_("elif_statement")
+    def elif_chain(self,v):
+        return tree.elif_chain(
+            [v[0]]
+        )
+    
+    @_("elif_statement elif_chain")
+    def elif_chain(self,v):
+        out = [v[0]]
+        out.extend(v[1].statements)
+        return tree.elif_chain(
+            out
+        )
+
+    # If statement
+    @_("IF LPAREN expr RPAREN namespace")
+    def if_statement(self, v):
+        return tree.if_conditional(
+            v[2],
+            v[4],
+            v.lineno,
+            v.index
+        )
+
+    # Else statement
+    @_("ELSE namespace")
+    def else_statement(self, v):
+        return tree.else_conditional(
+            v[1],
+            v.lineno,
+            v.index
+        )
+    
+    @_("ELIF LPAREN expr RPAREN namespace")
+    def elif_statement(self, v):
+        return tree.elif_conditional(
+            v[2],
+            v[4],
+            v.lineno,
+            v.index
+        )
+
+
 
 
     # Binary operators
@@ -255,8 +348,8 @@ class Parse(SLYParser):
     )
     def expr(self,v):
         return tree.unary_op(
-            v[0],
             v[1],
+            v[0],
             v.lineno,
             v.index
         )

@@ -6,4 +6,4 @@ function[int]: main = (){
     int: c = a + b;
 
     return 0;
-}
+};

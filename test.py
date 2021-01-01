@@ -70,6 +70,7 @@ def test_asm_file(file: str):
 
 if __name__ == "__main__":
     for i in range(4):
+        print(f"Test {i}")
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
     # Testing assembler
