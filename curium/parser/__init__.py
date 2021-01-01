@@ -95,7 +95,7 @@ class Parse(SLYParser):
         )
     @_("statement SEMICOLON")
     def statements(self, v):
-        out = [v[0], v[1]]
+        out = [v[0]]
         return tree.namespace(
             out
         )
