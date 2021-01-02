@@ -156,13 +156,7 @@ class Parse(SLYParser):
 
     # Assignment and initialization at the same time
     @_(
-        "name COLON name ASSG expr",
-        "name COLON name ADDASSG expr",
-        "name COLON name SUBASSG expr",
-        "name COLON name MULASSG expr",
-        "name COLON name DIVASSG expr",
-        "name COLON name MODASSG expr",
-        "name COLON name FLOORASSG expr"
+        "name COLON name ASSG expr"
     )
     def statement(self, v):
         return tree.var_init_assg(
