@@ -3,4 +3,4 @@ function[int]: main = (){
     print(toprint);
 
     return 0;
-}
+};

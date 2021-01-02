@@ -131,29 +131,19 @@ class Lex(Lexer):
     EQU             = r'=='
     NEQU            = r'!='
     LTGT            = r'<>'
-
     GT              = r'>'
     LT              = r'<'
-
     GTEQ            = r'>='
     LTEQ            = r'<='
 
     # Assignment operators
     ASSG            = r'='
-
     ADDASSG         = r'\+='
-
     SUBASSG         = r'-='
-
     MULASSG         = r'\*='
-
     DIVASSG         = r'/='
-
     MODASSG         = r'%='
-
     FLOORASSG       = r'//='
-
-
 
     # Mathematical operators
     ADD             = r'\+'
