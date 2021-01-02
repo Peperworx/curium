@@ -414,7 +414,7 @@ class while_loop(statement):
         self.index = index
     def resolve(self):
         return {
-            "tokname": "for",
+            "tokname": "while",
             "type": "statement",
             "expr": self.expr.resolve(),
             "contents": self.contents.resolve(),

@@ -26,8 +26,9 @@ class Parse(SLYParser):
             
         ),(
             "left", 
+            SEMICOLON,
+        ),("right",
             COMMA,
-            SEMICOLON
         ),("right",
             ASSG,
             ADDASSG,
