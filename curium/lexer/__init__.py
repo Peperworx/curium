@@ -1,8 +1,6 @@
-from typing import Any, Collection, get_type_hints
-
-from sly.yacc import _collect_grammar_rules
 from .tokens import *
 from sly import Lexer
+from typing import Any
 
 # Get rid of them pylint errors
 _ = lambda v: print

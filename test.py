@@ -1,4 +1,5 @@
 from curium import preprocessor
+from curium import intermediate
 from curium import parser
 from curium import lexer
 from rich.console import Console
@@ -51,7 +52,9 @@ def test_file(filename: str,result: str):
 
 
 def test_intermediate(filename):
-    pass
+    parse = intermediate.Parser()
+    with open(filename) as f:
+        parsed = parse.parse(f.read())
 
 
 if __name__ == "__main__":
