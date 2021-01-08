@@ -209,3 +209,83 @@ pop(%out);
 ```
 
 This behaves similarly to assembly's labels and ret, except that function contents need to be explicitly called.
+
+## Conditionals
+
+Here is a basic if, elif, else conditional:
+
+```cpp
+
+// Compare the values 1 and 2.
+cmp(1,2);
+
+if(>){
+    // Contents of if
+} else if (<) {
+    // Contents of else if
+} else {
+    // Contents of else
+}
+
+// Do something else
+
+```
+
+Now, even though the first if will always run, this is still an interesting example.
+
+The first if is a jg, the second if is a glt, and the else is simply a jump.
+
+This translates to this nasm code:
+
+```nasm
+_start:
+    mov rax, 1
+    cmp rax, 2
+    jg if_seg_1234 ; This will be some random number
+    jl elif_1_seg_1234 ; This will be the same number
+    jmp else_seg_1234 ; So will this
+
+if_seg_1234:
+    ; Contents of if
+    jmp finish_seg_1234
+
+elif_f_seg_1234:
+    ; Contents of else if
+    jmp finish_seg_1234
+
+else_seg_1234:
+    ; Contents of else
+    jmp finish_seg_1234
+
+finish_seg_1234:
+    jmp seg_1235
+
+seg_1235:
+    ; Do somemthing else
+
+
+```
+
+This is why C-like conditionals are so epic. So much less to do. Sooooo much less.
+
+And and Or also exist for conditionals:
+
+```cpp
+cmp(1,2);
+
+if(> | <){
+
+}
+
+if(== & !=){
+
+}
+```
+Those are just some nonsensical examples, but they are good for demonstration.
+
+# Behind the scenes
+
+This intermediate language mostly reads line by line.
+
+Only in two circumstances does it actually "branch" off, and that is functions and conditionals. Functions are not real branches, and they can not be nested. Conditionals, however, are a 100% different story.
+
