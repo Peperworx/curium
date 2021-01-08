@@ -52,9 +52,13 @@ def test_file(filename: str,result: str):
 
 
 def test_intermediate(filename):
-    parse = intermediate.Parser()
+    lex = intermediate.Lexer()
+
     with open(filename) as f:
-        parsed = parse.parse(f.read())
+        read = f.read()
+    
+    for tok in lex.tokenize(read):
+        print(tok)
 
 
 if __name__ == "__main__":
