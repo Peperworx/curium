@@ -27,7 +27,9 @@ class Lexer(SlyLexer):
         HEX,
         BIN,
         IF, ELSE, ELIF,
-        PTR
+        PTR,
+        DS,
+        FUNCTION
     }
 
     # Ignore spaces and tabs.
@@ -40,6 +42,7 @@ class Lexer(SlyLexer):
     BUILTIN["else"] = ELSE
     BUILTIN["elif"] = ELIF
     BUILTIN['ptr'] = PTR
+    BUILTIN['function'] = FUNCTION
 
     # Parentheses and brackets
     LPAREN = r'\('
@@ -61,6 +64,9 @@ class Lexer(SlyLexer):
 
     # Period for member access
     PERIOD = r'\.'
+
+    # Dollar sign
+    DS = r'\$'
 
     # A bunch of compairison symbols.
     EQU = r'=='
@@ -109,6 +115,10 @@ class Parser(SlyParser):
     def namespace(self, v):
         return ['ns',v[1]]
     
+    @_('LBRACE RBRACE')
+    def namespace(self, v):
+        return ['ns',None]
+    
 
     # For a list of instructions
     @_('semiinst insts')
@@ -126,6 +136,12 @@ class Parser(SlyParser):
     @_('statement')
     def semiinst(self,v):
         return v[0]
+
+    # Function definition
+    @_("FUNCTION LPAREN udefname RPAREN namespace")
+    def statement(self,v):
+        return ["function",v[0],v[3],v[4]]
+
 
     # Conditional
     @_("if_statement")
@@ -226,9 +242,13 @@ class Parser(SlyParser):
 
 
     # For a instruction argument
-    @_('number','builtin','udefname','ptr')
+    @_('number','builtin','udefname','ptr','stackmember')
     def arg(self,v):
         return v[0]
+    
+    @_('DS DECIMAL')
+    def stackmember(self,v):
+        return ['stack',v[1]]
     
     @_('PTR COLON arg')
     def ptr(self, v):

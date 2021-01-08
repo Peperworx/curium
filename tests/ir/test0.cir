@@ -1,17 +1,5 @@
-define(%else, u32);
+define(%c, u32);
+
 add(1,2);
-pop(%else);
-label(%a);
-cmp(%else,3);
 
-if(>){
-    add(1,2);
-} elif(<) {
-    add(2,3);
-} elif(==){
-    add(3,4);
-} else {
-    add(4,5);
-}
-
-jmp(ptr:%a);
+pop(%c);

@@ -60,7 +60,7 @@ def test_intermediate(filename):
     parse = intermediate.Parser()
 
     parsed = parse.parse(lex.tokenize(read))
-    print(parsed)
+    
 
 
 if __name__ == "__main__":
@@ -69,5 +69,6 @@ if __name__ == "__main__":
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
     # Testing intermediate language
-    for i in range(1):
+    for i in range(6):
+        print(f"IR Test {i}")
         test_intermediate(f"tests/ir/test{i}.cir")

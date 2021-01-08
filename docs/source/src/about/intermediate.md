@@ -35,7 +35,7 @@ mul($0, 2);
 add($0, -1);
 
 // (3*2+-1):
-push(3)
+push(3);
 mul($0 ,2);
 add($0, -1);
 
@@ -44,7 +44,7 @@ add($0, -1);
 add($1, $0);
 
 // Pop value into c
-pop(%c)
+pop(%c);
 
 ```
 Lets take a real quick look at that.
@@ -221,7 +221,7 @@ cmp(1,2);
 
 if(>){
     // Contents of if
-} else if (<) {
+} elif (<) {
     // Contents of else if
 } else {
     // Contents of else
