@@ -409,17 +409,25 @@ class CodeGen:
         # Label Generation
         ####################
 
-        # Now we need to generate labels for 
+        # Now we need to generate labels for each section
+        # These are what the above jump commands jump to
 
         # If Label
+        # Add the name of the label
         output.append(["label",f"%{ifseg}"])
-        # Contents
+        
+        # Convert the contents to a form useable by the parse function
         ifsegdesc = ["insts",*ifsect[1][1][1:]]
+
+        # Add the parsed contents, using the section id of the if segment
         output.extend(self.parse(ifsegdesc,sectid=ifseg))
-        # Jump Ahead
+
+        # Jump Ahead to the end of the conditional.
+        # This will be skipped if if is never called
         output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
         
-        # Elif labels
+
+        # Do the same for elif
         for e,n in zip(elifsect,elifsegs):
             # Create label n
             output.append(["label",f"%{n}"])
@@ -431,7 +439,7 @@ class CodeGen:
             # Jump Ahead
             output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
 
-        # Else label
+        # And for else
         if elsesect:
             output.append(["label",f"%{elseseg}"])
             elsesegdesc = ["insts",*elsesect[1][1:]]
@@ -439,9 +447,10 @@ class CodeGen:
             # Jump Ahead
             output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
 
-        # End label
+        # And add a label that marks the end of the conditional
         output.append(["label", f"%{endlabel}"])
 
+        # Return the output
         return output
 
 
