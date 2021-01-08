@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
-    <link rel="preload" href="/docs/assets/css/0.styles.87acb512.css" as="style"><link rel="preload" href="/docs/assets/js/app.290f32cb.js" as="script"><link rel="preload" href="/docs/assets/js/2.e6bac897.js" as="script"><link rel="preload" href="/docs/assets/js/11.606a5f5b.js" as="script"><link rel="prefetch" href="/docs/assets/js/10.59ed5add.js"><link rel="prefetch" href="/docs/assets/js/12.0c65e4e8.js"><link rel="prefetch" href="/docs/assets/js/13.90651feb.js"><link rel="prefetch" href="/docs/assets/js/14.13f6fc9d.js"><link rel="prefetch" href="/docs/assets/js/15.75ffd2cc.js"><link rel="prefetch" href="/docs/assets/js/3.5b9f4aa1.js"><link rel="prefetch" href="/docs/assets/js/4.55f1f032.js"><link rel="prefetch" href="/docs/assets/js/5.bbe67148.js"><link rel="prefetch" href="/docs/assets/js/6.6b6f6668.js"><link rel="prefetch" href="/docs/assets/js/7.9fa52886.js"><link rel="prefetch" href="/docs/assets/js/8.df5f58b5.js"><link rel="prefetch" href="/docs/assets/js/9.29638786.js">
+    <link rel="preload" href="/docs/assets/css/0.styles.87acb512.css" as="style"><link rel="preload" href="/docs/assets/js/app.7f377506.js" as="script"><link rel="preload" href="/docs/assets/js/2.e6bac897.js" as="script"><link rel="preload" href="/docs/assets/js/11.ff3580ec.js" as="script"><link rel="prefetch" href="/docs/assets/js/10.59ed5add.js"><link rel="prefetch" href="/docs/assets/js/12.76b9be59.js"><link rel="prefetch" href="/docs/assets/js/13.a4d158d5.js"><link rel="prefetch" href="/docs/assets/js/14.0a4d35b5.js"><link rel="prefetch" href="/docs/assets/js/15.bfe68d6e.js"><link rel="prefetch" href="/docs/assets/js/3.5b9f4aa1.js"><link rel="prefetch" href="/docs/assets/js/4.55f1f032.js"><link rel="prefetch" href="/docs/assets/js/5.bbe67148.js"><link rel="prefetch" href="/docs/assets/js/6.6b6f6668.js"><link rel="prefetch" href="/docs/assets/js/7.9fa52886.js"><link rel="prefetch" href="/docs/assets/js/8.df5f58b5.js"><link rel="prefetch" href="/docs/assets/js/9.29638786.js">
     <link rel="stylesheet" href="/docs/assets/css/0.styles.87acb512.css">
   </head>
   <body>
@@ -129,7 +129,56 @@ ptr<span class="token operator">:</span><span class="token number">0xB8000</span
 
 <span class="token comment">// Pop the result into argument</span>
 <span class="token function">pop</span><span class="token punctuation">(</span><span class="token operator">%</span>out<span class="token punctuation">)</span><span class="token punctuation">;</span>
-</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><p>This behaves similarly to assembly's labels and ret, except that function contents need to be explicitly called.</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/docs/assets/js/app.290f32cb.js" defer></script><script src="/docs/assets/js/2.e6bac897.js" defer></script><script src="/docs/assets/js/11.606a5f5b.js" defer></script>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><p>This behaves similarly to assembly's labels and ret, except that function contents need to be explicitly called.</p> <h2 id="conditionals"><a href="#conditionals" class="header-anchor">#</a> Conditionals</h2> <p>Here is a basic if, elif, else conditional:</p> <div class="language-cpp line-numbers-mode"><pre class="language-cpp"><code>
+<span class="token comment">// Compare the values 1 and 2.</span>
+<span class="token function">cmp</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token comment">// Contents of if</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">&lt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Contents of else if</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Contents of else</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Do something else</span>
+
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>Now, even though the first if will always run, this is still an interesting example.</p> <p>The first if is a jg, the second if is a glt, and the else is simply a jump.</p> <p>This translates to this nasm code:</p> <div class="language-nasm line-numbers-mode"><pre class="language-nasm"><code><span class="token label function">_start:</span>
+    mov <span class="token register variable">rax</span>, <span class="token number">1</span>
+    cmp <span class="token register variable">rax</span>, <span class="token number">2</span>
+    jg if_seg_1234 <span class="token comment">; This will be some random number</span>
+    jl elif_1_seg_1234 <span class="token comment">; This will be the same number</span>
+    jmp else_seg_1234 <span class="token comment">; So will this</span>
+
+<span class="token label function">if_seg_1234:</span>
+    <span class="token comment">; Contents of if</span>
+    jmp finish_seg_1234
+
+<span class="token label function">elif_f_seg_1234:</span>
+    <span class="token comment">; Contents of else if</span>
+    jmp finish_seg_1234
+
+<span class="token label function">else_seg_1234:</span>
+    <span class="token comment">; Contents of else</span>
+    jmp finish_seg_1234
+
+<span class="token label function">finish_seg_1234:</span>
+    jmp seg_1235
+
+<span class="token label function">seg_1235:</span>
+    <span class="token comment">; Do somemthing else</span>
+
+
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br></div></div><p>This is why C-like conditionals are so epic. So much less to do. Sooooo much less.</p> <p>And and Or also exist for conditionals:</p> <div class="language-cpp line-numbers-mode"><pre class="language-cpp"><code><span class="token function">cmp</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">&gt;</span> <span class="token operator">|</span> <span class="token operator">&lt;</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+
+<span class="token punctuation">}</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">==</span> <span class="token operator">&amp;</span> <span class="token operator">!=</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+
+<span class="token punctuation">}</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><p>Those are just some nonsensical examples, but they are good for demonstration.</p> <h1 id="behind-the-scenes"><a href="#behind-the-scenes" class="header-anchor">#</a> Behind the scenes</h1> <p>This intermediate language mostly reads line by line.</p> <p>Only in two circumstances does it actually &quot;branch&quot; off, and that is functions and conditionals. Functions are not real branches, and they can not be nested. Conditionals, however, are a 100% different story.</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/docs/assets/js/app.7f377506.js" defer></script><script src="/docs/assets/js/2.e6bac897.js" defer></script><script src="/docs/assets/js/11.ff3580ec.js" defer></script>
   </body>
 </html>
