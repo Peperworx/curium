@@ -26,7 +26,8 @@ class Lexer(SlyLexer):
         DECIMAL,
         HEX,
         BIN,
-        IF, ELSE
+        IF, ELSE, ELIF,
+        PTR
     }
 
     # Ignore spaces and tabs.
@@ -37,6 +38,8 @@ class Lexer(SlyLexer):
     BUILTIN = r"[a-zA-Z_][a-zA-Z0-9_\.]*"
     BUILTIN["if"] = IF
     BUILTIN["else"] = ELSE
+    BUILTIN["elif"] = ELIF
+    BUILTIN['ptr'] = PTR
 
     # Parentheses and brackets
     LPAREN = r'\('
@@ -105,6 +108,7 @@ class Parser(SlyParser):
     @_('LBRACE insts RBRACE')
     def namespace(self, v):
         return ['ns',v[1]]
+    
 
     # For a list of instructions
     @_('semiinst insts')
@@ -115,22 +119,32 @@ class Parser(SlyParser):
         elif v[1][0] == "insts":
             out.extend(v[1][1:])
         return out
+    @_('semiinst')
+    def insts(self, v):
+        return ["inst",v[0]]
+
+    @_('statement')
+    def semiinst(self,v):
+        return v[0]
 
     # Conditional
     @_("if_statement")
-    def semiinst(self,v):
+    def statement(self,v):
         return ["conditional",v[0],None,None]
     
     @_('if_statement else_statement')
-    def semiinst(self,v):
+    def statement(self,v):
         return ["conditional",v[0],None,v[1]]
     
-    @_('if_statement elif_statement')
-    def semiinst(self,v):
+    
+    @_('if_statement elif_chain')
+    def statement(self,v):
         return ["conditional",v[0],v[1],None]
     
-    @_('if_statement elif_statement else_statement')
-    def simiinst(self,v):
+    
+    
+    @_('if_statement elif_chain else_statement')
+    def statement(self,v):
         return ["conditional",v[0],v[1],v[2]]
 
     # Elif chain
@@ -142,14 +156,16 @@ class Parser(SlyParser):
     def elif_chain(self,v):
         return ['elif-chain',v[0],*v[1][1:]]
 
+
+    # If statement
     @_("IF LPAREN compair RPAREN namespace")
     def if_statement(self,v):
         return ['if',v[2],v[4]]
     
     
-    @_("ELSE IF LPAREN compair RPAREN namespace")
+    @_("ELIF LPAREN compair RPAREN namespace")
     def elif_statement(self,v):
-        return ['elif',v[3],v[5]]
+        return ['elif',v[2],v[4]]
 
     @_("ELSE namespace")
     def else_statement(self,v):
@@ -169,9 +185,7 @@ class Parser(SlyParser):
 
     
 
-    @_('semiinst')
-    def insts(self, v):
-        return ["inst",v[0]]
+    
     
     # Rule for a single instruction with semicolon
     @_('instruction SEMICOLON')
@@ -212,23 +226,23 @@ class Parser(SlyParser):
 
 
     # For a instruction argument
-    @_('number','builtin','udefname')
+    @_('number','builtin','udefname','ptr')
     def arg(self,v):
         return v[0]
+    
+    @_('PTR COLON arg')
+    def ptr(self, v):
+        return ['pointer',v[2]]
 
     # Rule for builtins
     @_('BUILTIN')
     def builtin(self,v):
-        if v[0][1] == 'if':
-            return ['IF']
-        if v[0][1] == 'else':
-            return ['ELSE']
         return ['builtin',v[0]]
 
     # Rule for user defined names
     @_('names')
     def udefname(self,v):
-        return ['udefname',v[0]]
+        return ['udefname',v[0][1]]
 
     # To match names
     @_("NAME PERIOD names")
