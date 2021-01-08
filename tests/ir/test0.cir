@@ -1,0 +1,3 @@
+define(%c, u32);
+add(1,2);
+pop(%c);

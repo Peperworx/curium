@@ -54,4 +54,4 @@ As I said, Curium will use Documentation Driven Devlopment, as (in my opinion) t
 You can start the tutorial by going [here](/tutorial/).
 
 ## More about this language
-You can find out details [here](/about/more.md)
+You can find out details [here](/about/more) And about the intermediate language [here](/about/intermediate)

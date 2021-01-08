@@ -1,5 +1,5 @@
 from curium import preprocessor
-from curium import assembler
+from curium import intermediate
 from curium import parser
 from curium import lexer
 from rich.console import Console
@@ -51,28 +51,21 @@ def test_file(filename: str,result: str):
         f.write(parsedump)
 
 
-def test_asm_file(file: str):
-    # Read the contents
-    with open(file) as f:
-        out = f.read()
+def test_intermediate(filename):
+    lex = intermediate.Lexer()
 
-    # Parse it
-    parser = assembler.Parser()
-    parsed = parser.parse(out)
+    with open(filename) as f:
+        read = f.read()
     
-    # Dump it
-    with open(file+".pegdump", "w+") as f:
-        f.write(json.dumps(parsed, indent=4))
+    for tok in lex.tokenize(read):
+        print(tok)
 
-    # Assemble it
-    asm = assembler.Assembler()
-    asmed = asm.assemble(parsed)
 
 if __name__ == "__main__":
     for i in range(4):
         print(f"Test {i}")
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
-    # Testing assembler
-    #for i in range(1):
-    #    test_asm_file(f"tests/asm/test{i}.casm")
+    # Testing intermediate language
+    for i in range(1):
+        test_intermediate(f"tests/ir/test{i}.cir")
