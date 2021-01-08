@@ -283,9 +283,62 @@ if(== & !=){
 ```
 Those are just some nonsensical examples, but they are good for demonstration.
 
+
+
+## Classes
+
+Classes are simply structures with a code segment.
+
+The following example is how a class would be implemented.
+```cpp
+struct(%test_struct);
+member(%test_struct, %a, u32);
+member(%test_struct, %b, u32);
+
+function(%test_struct.add_to_a_b){
+    // Load the this reference.
+    define(%this);
+    pop(%this);
+
+    // Add a and b to the argument.
+    add($0,%this.a);
+    add($0,%this.b);
+    // Already on stack. no need to push
+}
+
+// The above function takes one argument, and
+// Adds a and b to it.
+
+// Lets create an instance of %test_struct
+
+define(%test_inst,%test_struct);
+
+// Create variable for output
+define(%out, u32);
+
+// Move 1 and 2 into test_inst.a and b
+mov(%test_inst.a,1);
+mov(%test_inst.b,2);
+
+// Push the argument (3)
+push(3);
+
+// Call the function
+call(%test_inst.add_t_a_b);
+
+// Pop into output
+pop(%out);
+
+
+```
+
+When you call a function that is a member of a structure, a pointer to the instance of the structure is pushed to the stack automatically. If you call off of the main type, instead of the instance, the pointer is not pushed automatically.
+
+
 # Behind the scenes
 
 This intermediate language mostly reads line by line.
 
 Only in two circumstances does it actually "branch" off, and that is functions and conditionals. Functions are not real branches, and they can not be nested. Conditionals, however, are a 100% different story.
+
 
