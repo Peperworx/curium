@@ -301,11 +301,12 @@ class CodeGen:
     
     def inst_handle(self, conts):
         return ["instruction",conts[0][1],conts[1][1:]]
-
+    def jump_from_condition(self,v,section):
+        print(v)
     def conditional_handle(self,cond,sectid=""):
         ifsect = cond[0][1:]
         elifsect = cond[1][1:]
-        elsesect = cond[2][1]
+        elsesect = cond[2][1] if cond[2] else None
         
         # Now we need to generate the id
         id = random.randint(0,0xFFFF)
@@ -324,6 +325,18 @@ class CodeGen:
 
         # Create the end label
         endlabel = f"sect_end_{desc}"
+
+        # Generate jumps
+
+        # Jump for if
+        output.append(self.jump_from_condition(ifsect[0],ifseg))
+
+        # Jump for else
+        if elsesect:
+            output.append(["instruction","jmp", [["udefname",f"%{elseseg}"]]])
+        
+        # Backup jump if all else fails
+
 
         # If Label
         output.append(["label",f"%{ifseg}"])
@@ -348,11 +361,12 @@ class CodeGen:
             output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
 
         # Else label
-        output.append(["label",f"%{elseseg}"])
-        elsesegdesc = ["insts",*elsesect[1][1:]]
-        output.extend(self.parse(elsesegdesc,sectid=elseseg))
-        # Jump Ahead
-        output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
+        if elsesect:
+            output.append(["label",f"%{elseseg}"])
+            elsesegdesc = ["insts",*elsesect[1][1:]]
+            output.extend(self.parse(elsesegdesc,sectid=elseseg))
+            # Jump Ahead
+            output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
 
         # End label
         output.append(["label", f"%{endlabel}"])
