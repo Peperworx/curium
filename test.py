@@ -57,8 +57,10 @@ def test_intermediate(filename):
     with open(filename) as f:
         read = f.read()
     
-    for tok in lex.tokenize(read):
-        print(tok)
+    parse = intermediate.Parser()
+
+    parsed = parse.parse(lex.tokenize(read))
+    print(parsed)
 
 
 if __name__ == "__main__":
