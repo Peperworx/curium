@@ -1,4 +1,5 @@
 
+from curium.lexer.tokens import ELSE, IF
 from sly import Parser as SlyParser
 from sly import Lexer as SlyLexer
 from rich import print
@@ -23,7 +24,8 @@ class Lexer(SlyLexer):
         EQU, NEQU,
         DECIMAL,
         HEX,
-        BIN
+        BIN,
+        IF, ELSE
     }
 
     # Ignore spaces and tabs.
@@ -31,6 +33,8 @@ class Lexer(SlyLexer):
 
     # Names
     NAME = r"[a-zA-Z_][a-zA-Z0-9_]*"
+    NAME['if'] = IF
+    NAME['else'] = ELSE
 
     # Parentheses and brackets
     LPAREN = r'\('
@@ -88,6 +92,20 @@ class Lexer(SlyLexer):
 class Parser(SlyParser):
     tokens = Lexer.tokens
 
+
+
+    # The entire file is just a list of instructions
+    @_('insts')
+    def file(self, v):
+        return v[0]
+
+    
+    
+    # A namespace is { insts }
+    @_('LBRACE insts RBRACE')
+    def namespace(self, v):
+        return ['ns',v[1]]
+
     # For a list of instructions
     @_('semiinst insts')
     def insts(self, v):
@@ -102,6 +120,7 @@ class Parser(SlyParser):
     def insts(self, v):
         return ["inst",v[0]]
     
+    # Rule for a single instruction with semicolon
     @_('instruction SEMICOLON')
     def semiinst(self,v):
         return v[0]
@@ -147,6 +166,10 @@ class Parser(SlyParser):
     # Rule for builtins
     @_('names')
     def builtin(self,v):
+        if v[0][1] == 'if':
+            return ['IF']
+        if v[0][1] == 'else':
+            return ['ELSE']
         return ['builtin',v[0]]
 
     # Rule for user defined names
@@ -165,7 +188,7 @@ class Parser(SlyParser):
         return out
     
 
-    @_("NAME")
+    @_("NAME","IF","ELSE")
     def names(self,v):
         return ['name',v[0]]
     

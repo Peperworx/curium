@@ -1,5 +1,7 @@
-define(%c, u32);
+define(%else, u32);
 add(1,2);
-pop(%c);
+pop(%else);
 
-cmp(%c,3);
+cmp(%else,3);
+
+if();
