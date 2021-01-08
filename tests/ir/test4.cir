@@ -1,0 +1,13 @@
+function(%add_two_numbers){
+    add($0, $1);
+}
+
+define(%out);
+push(1);
+push(3);
+
+
+call(%add_two_numbers);
+
+
+pop(%out);
