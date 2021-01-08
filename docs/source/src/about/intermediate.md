@@ -93,4 +93,119 @@ Here `struct` defines a data structure. It has one input, the name.
 `member` adds a new member to the structure.
 The arguments are as follows:
 
+1. The name of the structure to add a member to
+2. The name of the member
+3. The type of the member
+4. The default value of the member (Optional)
 
+
+## Types
+
+There are various types.
+
+Pointer types can point any names. They look like `ptr:%name`
+
+There are several integer types:
+
+##### Unsigned
+- U64, a 64 bit integer, unsigned
+- U32, a 32 bit integer, unsigned
+- U16, a 16 bit integer, unsigned
+- U8, an 8 bit integer, unsigned
+
+##### Signed
+- S64, a 64 bit integer, signed
+- S32, a 32 bit integer, signed
+- S16, a 16 bit integer, signed
+- S8, an 8 bit integer, signed
+
+There can also be pointers to respective integer types
+
+There are also several float types:
+
+- Float, a 32 bit float
+- Double, a 64 bit float
+- long double, an 80 bit floar
+  
+### Void type
+A void type is a raw pointer, with no type specified. It can be referenced by pointing to an integer address, or pointing to a label.
+For example:
+
+```cpp
+// Define a label
+label(%x);
+
+// Reference a pointer to the label
+ptr:%x
+
+// Reference a pointer to an address
+ptr:0xB8000
+
+```
+
+### Structures as types
+
+Structures can be used as types. For example:
+```cpp
+// This uses struct a from the structures section
+
+struct(%a);
+member(%a, %b, u32);
+member(%a, %c, ptr:%a);
+member(%a, %d, u32, 0);
+
+
+
+// Create instance of a
+define(%inst_of_a, %a);
+
+// Create e
+define(%e, u32);
+
+// Add b and d
+add(%inst_of_a.b, %inst_of_a.d);
+
+// Pop into e
+pop(%e);
+
+```
+
+Structure instances are simply defined by using `define` with the name of the structure.
+
+Structure members are accessed using `.`.
+
+
+
+## Functions
+
+Functions are very similar to assembly labels.
+
+Here is an example function that adds two numbers and returns them:
+
+```cpp
+// Define the function
+function(%add_two_numbers){
+
+// add the two numbers at the top of the stack
+add($0, $1);
+
+// This already pushes the value to stack, so our job is over
+
+// End the function definition
+}
+
+```
+This function can be called like so:
+```cpp
+define(%out); // Define a variable for output
+push(1); // Push the last argument
+push(3); // Push the first argument
+
+// Call the function
+call(%add_two_numbers);
+
+// Pop the result into argument
+pop(%out);
+```
+
+This behaves similarly to assembly's labels and ret, except that function contents need to be explicitly called.
