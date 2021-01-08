@@ -4,4 +4,10 @@ pop(%else);
 
 cmp(%else,3);
 
-if();
+if(){
+    add(1,2);
+} else if() {
+    add(2,3);
+} else {
+    add(3,4);
+}

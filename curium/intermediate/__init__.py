@@ -11,6 +11,7 @@ _ = lambda v: print(v)
 class Lexer(SlyLexer):
     tokens = {
         NAME,
+        BUILTIN,
         LPAREN, RPAREN,
         LBRACE, RBRACE,
         LBRACK, RBRACK,
@@ -32,9 +33,10 @@ class Lexer(SlyLexer):
     ignore = ' \t'
 
     # Names
-    NAME = r"[a-zA-Z_][a-zA-Z0-9_]*"
-    NAME['if'] = IF
-    NAME['else'] = ELSE
+    NAME = r"%[a-zA-Z_][a-zA-Z0-9_\.]*"
+    BUILTIN = r"[a-zA-Z_][a-zA-Z0-9_\.]*"
+    BUILTIN["if"] = IF
+    BUILTIN["else"] = ELSE
 
     # Parentheses and brackets
     LPAREN = r'\('
@@ -99,8 +101,6 @@ class Parser(SlyParser):
     def file(self, v):
         return v[0]
 
-    
-    
     # A namespace is { insts }
     @_('LBRACE insts RBRACE')
     def namespace(self, v):
@@ -115,6 +115,59 @@ class Parser(SlyParser):
         elif v[1][0] == "insts":
             out.extend(v[1][1:])
         return out
+
+    # Conditional
+    @_("if_statement")
+    def semiinst(self,v):
+        return ["conditional",v[0],None,None]
+    
+    @_('if_statement else_statement')
+    def semiinst(self,v):
+        return ["conditional",v[0],None,v[1]]
+    
+    @_('if_statement elif_statement')
+    def semiinst(self,v):
+        return ["conditional",v[0],v[1],None]
+    
+    @_('if_statement elif_statement else_statement')
+    def simiinst(self,v):
+        return ["conditional",v[0],v[1],v[2]]
+
+    # Elif chain
+    @_("elif_statement")
+    def elif_chain(self,v):
+        return ['elif-chain',v[0]]
+    
+    @_("elif_statement elif_chain")
+    def elif_chain(self,v):
+        return ['elif-chain',v[0],*v[1][1:]]
+
+    @_("IF LPAREN compair RPAREN namespace")
+    def if_statement(self,v):
+        return ['if',v[2],v[4]]
+    
+    
+    @_("ELSE IF LPAREN compair RPAREN namespace")
+    def elif_statement(self,v):
+        return ['elif',v[3],v[5]]
+
+    @_("ELSE namespace")
+    def else_statement(self,v):
+        return ['else',v[1]]
+    
+    # Compairison
+    @_(
+        "EQU",
+        "NEQU",
+        "GT",
+        "LT",
+        "GTEQ",
+        "LTEQ"
+    )
+    def compair(self,v):
+        return v[0]
+
+    
 
     @_('semiinst')
     def insts(self, v):
@@ -164,7 +217,7 @@ class Parser(SlyParser):
         return v[0]
 
     # Rule for builtins
-    @_('names')
+    @_('BUILTIN')
     def builtin(self,v):
         if v[0][1] == 'if':
             return ['IF']
@@ -173,9 +226,9 @@ class Parser(SlyParser):
         return ['builtin',v[0]]
 
     # Rule for user defined names
-    @_('PCT names')
+    @_('names')
     def udefname(self,v):
-        return ['udefname',v[1]]
+        return ['udefname',v[0]]
 
     # To match names
     @_("NAME PERIOD names")
@@ -188,7 +241,7 @@ class Parser(SlyParser):
         return out
     
 
-    @_("NAME","IF","ELSE")
+    @_("NAME")
     def names(self,v):
         return ['name',v[0]]
     
