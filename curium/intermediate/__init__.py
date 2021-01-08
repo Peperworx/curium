@@ -47,6 +47,18 @@ class Lexer(SlyLexer):
     def decimal(self, v):
         v.value = int(v.value)
         return v
+    
+    # Hex integers
+    @_(r"0x[a-fA-F0-9]*")
+    def hex(self, v):
+        v.value = int(v.value[2:],16)
+        return v
+    
+    # Bin integers
+    @_(r"0b[0-1]*")
+    def bin(self, v):
+        v.value = int(v.value[2:],2)
+        return v
 
     # Newlines should increment lineno
     @_('\n')
