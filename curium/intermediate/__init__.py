@@ -302,47 +302,119 @@ class CodeGen:
     def inst_handle(self, conts):
         return ["instruction",conts[0][1],conts[1][1:]]
     def jump_from_condition(self,v,section):
-        print(v)
+        jump_table = {
+            "==":"je",
+            "!=":"jne",
+            ">":"jg",
+            ">=":"jge",
+            "<":"jl",
+            "<=":"jle"
+        }
+        
+        return [
+            [
+                "instruction", 
+                jump_table[v],
+                [["udefname",section]]
+            ]
+        ]
+
+
+
     def conditional_handle(self,cond,sectid=""):
+        """
+            This function handles conditionals, and in theory, nested conditionals.
+        """
+        # These are the "sections" of
+        # the conditional handlers that hold specific parts
         ifsect = cond[0][1:]
         elifsect = cond[1][1:]
         elsesect = cond[2][1] if cond[2] else None
         
+        
+        #################
+        # ID Generation
+        #################
         # Now we need to generate the id
         id = random.randint(0,0xFFFF)
+
+        # And if it already exists, regenerate
         while id in self.ids:
             id = random.randint(0,0xFFFF)
         
+        # Append it, So that we know if it exists
+        self.ids.append(id)
+        
+
+        #################
+        # Segment names
+        #################
+
         # Generate the segment names
-        desc = f"{id}{'_'+sectid if sectid != '' else ''}"
+
+        # The description that describes every segment.
+        # We only add sectid if it exists
+        desc = f"{id}{f'_{sectid}' if sectid != '' else ''}"
+
+        # if segment name
         ifseg = f"if_{desc}"
+
+        # else segment name
         elseseg = f"else_{desc}"
-        # Elif segs
+
+        # and one for each elif
         elifsegs = [f"elif_{i}_{desc}" for i in range(len(elifsect))]
+
+        # as well as one for the end of the conditional
+        endlabel = f"sect_end_{desc}"
+
         
         # Now we need to start on output
         output = []
 
-        # Create the end label
-        endlabel = f"sect_end_{desc}"
+        ####################
+        # Conditional Jumps
+        ####################
 
-        # Generate jumps
+        # These are the actual "conditional" part of the code
+        # the statements are executed in the order
+        # if, elif(s), else, the rest of the code.
+
+        # If the conditional jump succeeds, then the rest won't be executed
 
         # Jump for if
-        output.append(self.jump_from_condition(ifsect[0],ifseg))
+        output.extend(self.jump_from_condition(ifsect[0],ifseg))
 
-        # Jump for else
+        # If the above jump succeeds, it will skip the rest
+        # This happens for every jump
+
+        # Do this for every elif
+        for e,n in zip(elifsect,elifsegs):
+            output.extend(self.jump_from_condition(e[1],f"%{n}"))
+
+        # And for else, but only if else exists
         if elsesect:
             output.append(["instruction","jmp", [["udefname",f"%{elseseg}"]]])
         
-        # Backup jump if all else fails
 
+
+        # Now we need a backup jump.
+        # Each created segment will jump to the end,
+        # But if for some reason none of the above jumps
+        # succeed, we still need to skip the conditional.
+        # This also happens if no else statement is provided.
+        output.append(["instruction","jmp",[["udefname", f"%{endlabel}"]]])
+        
+        ####################
+        # Label Generation
+        ####################
+
+        # Now we need to generate labels for 
 
         # If Label
         output.append(["label",f"%{ifseg}"])
         # Contents
         ifsegdesc = ["insts",*ifsect[1][1][1:]]
-        print(ifsegdesc)
         output.extend(self.parse(ifsegdesc,sectid=ifseg))
         # Jump Ahead
         output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
@@ -354,7 +426,6 @@ class CodeGen:
             
             # Contents
             elifsegdesc = ["insts",*e[2][1][1:]]
-            print(elifsegdesc)
             output.extend(self.parse(elifsegdesc,sectid=n))
 
             # Jump Ahead
