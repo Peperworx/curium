@@ -89,18 +89,22 @@ class Parser(SlyParser):
     tokens = Lexer.tokens
 
     # For a list of instructions
-    @_('instruction SEMICOLON insts')
+    @_('semiinst insts')
     def insts(self, v):
         out = ['insts',v[0]]
-        if v[2][0] == "inst":
-            out.append(v[2][1])
-        elif v[2][0] == "insts":
-            out.extend(v[2][1:])
+        if v[1][0] == "inst":
+            out.append(v[1][1])
+        elif v[1][0] == "insts":
+            out.extend(v[1][1:])
         return out
 
-    @_('instruction SEMICOLON')
+    @_('semiinst')
     def insts(self, v):
         return ["inst",v[0]]
+    
+    @_('instruction SEMICOLON')
+    def semiinst(self,v):
+        return v[0]
 
     # A single instruction call
     @_('builtin instructioncall')
