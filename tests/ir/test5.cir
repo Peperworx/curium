@@ -4,8 +4,10 @@ if(>){
     add(1,2);
 } elif(<) {
     add(2,3);
-} else {
+} elif (==) {
     add(3,4);
+} else {
+    add(4,5);
 }
 
 add(5,6);

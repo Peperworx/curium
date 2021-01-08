@@ -61,6 +61,9 @@ def test_intermediate(filename):
 
     parsed = parse.parse(lex.tokenize(read))
     
+    codegen = intermediate.CodeGen()
+    gen = codegen.gen(parsed)
+    print(gen)
 
 
 if __name__ == "__main__":

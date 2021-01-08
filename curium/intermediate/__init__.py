@@ -3,6 +3,7 @@ from curium.lexer.tokens import ELSE, IF
 from sly import Parser as SlyParser
 from sly import Lexer as SlyLexer
 from rich import print
+import random
 import os
 
 # Pylance errors go byby
@@ -285,3 +286,105 @@ class Parser(SlyParser):
     @_("HEX","DECIMAL","BIN")
     def number(self, v):
         return ['number',v[0]]
+
+class CodeGen:
+    def create_section(self,name,conts):
+        print(name)
+        print(conts)
+
+    def __init__(self):
+        self.ids = []
+
+
+    def gen(self,input,sectid=""):
+        return self.parse(input,isfirst=True)
+    
+    def inst_handle(self, conts):
+        return ["instruction",conts[0][1],conts[1][1:]]
+
+    def conditional_handle(self,cond,sectid=""):
+        ifsect = cond[0][1:]
+        elifsect = cond[1][1:]
+        elsesect = cond[2][1]
+        
+        # Now we need to generate the id
+        id = random.randint(0,0xFFFF)
+        while id in self.ids:
+            id = random.randint(0,0xFFFF)
+        
+        # Generate the segment names
+        desc = f"{id}{'_'+sectid if sectid != '' else ''}"
+        ifseg = f"if_{desc}"
+        elseseg = f"else_{desc}"
+        # Elif segs
+        elifsegs = [f"elif_{i}_{desc}" for i in range(len(elifsect))]
+        
+        # Now we need to start on output
+        output = []
+
+        # Create the end label
+        endlabel = f"sect_end_{desc}"
+
+        # If Label
+        output.append(["label",f"%{ifseg}"])
+        # Contents
+        ifsegdesc = ["insts",*ifsect[1][1][1:]]
+        print(ifsegdesc)
+        output.extend(self.parse(ifsegdesc,sectid=ifseg))
+        # Jump Ahead
+        output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
+        
+        # Elif labels
+        for e,n in zip(elifsect,elifsegs):
+            # Create label n
+            output.append(["label",f"%{n}"])
+            
+            # Contents
+            elifsegdesc = ["insts",*e[2][1][1:]]
+            print(elifsegdesc)
+            output.extend(self.parse(elifsegdesc,sectid=n))
+
+            # Jump Ahead
+            output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
+
+        # Else label
+        output.append(["label",f"%{elseseg}"])
+        elsesegdesc = ["insts",*elsesect[1][1:]]
+        output.extend(self.parse(elsesegdesc,sectid=elseseg))
+        # Jump Ahead
+        output.append(["instruction","jmp",[["udefname",f"%{endlabel}"]]])
+
+        # End label
+        output.append(["label", f"%{endlabel}"])
+
+        return output
+
+
+    def parse(self,input,sectid="",isfirst=False):
+        # Get the tag
+        tag = input[0]
+
+        # Get the contents
+        conts = input[1:]
+
+        output = []
+
+        # If it is an instruction list
+        if tag == "insts":
+            # If it is the first, then add the start tag
+            if isfirst:
+                output.append(["label", "_start"])
+            
+            # Now parse per instruction
+            for i in conts:
+                output.extend(self.parse(i))
+        elif tag == "icall":
+            # Append the instruction call
+            output.append(self.inst_handle(conts))
+
+        elif tag == "conditional":
+            # Append the conditional definition
+            output.extend(self.conditional_handle(conts,sectid))
+
+        
+        return output
