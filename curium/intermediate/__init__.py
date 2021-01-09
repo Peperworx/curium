@@ -454,8 +454,27 @@ class CodeGen:
         return output
     
     def function_handle(self, conts, sectid=""):
-        print(conts)
-        return []
+        out = []
+
+        # Generate function name
+        name = f"{f'{sectid}_' if sectid != '' else ''}{conts[1][1]}"
+
+        # Add the skip jump
+        out.append(["instruction","jmp",["udefname",f"%end_{name}"]])
+
+        # Create a label of function name
+        out.append(["label",f"%{name}"])
+        
+        # Add the functions contents
+        out.extend(self.parse(["insts",*conts[2][1][1:]],name))
+        
+        # Add the function return
+        out.append(["instruction","ret",[]])
+
+        # Add the end label
+        out.append(["label",f"%end_{name}"])
+
+        return out
 
     def parse(self,input,sectid="",isfirst=False):
         # Get the tag
