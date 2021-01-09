@@ -141,7 +141,7 @@ class Parser(SlyParser):
     # Function definition
     @_("FUNCTION LPAREN udefname RPAREN namespace")
     def statement(self,v):
-        return ["function",v[0],v[3],v[4]]
+        return ["function",v[0],v[2],v[4]]
 
 
     # Conditional
@@ -452,7 +452,10 @@ class CodeGen:
 
         # Return the output
         return output
-
+    
+    def function_handle(self, conts, sectid=""):
+        print(conts)
+        return []
 
     def parse(self,input,sectid="",isfirst=False):
         # Get the tag
@@ -479,6 +482,9 @@ class CodeGen:
         elif tag == "conditional":
             # Append the conditional definition
             output.extend(self.conditional_handle(conts,sectid))
-
+        
+        elif tag == "function":
+            # append the function definition
+            output.extend(self.function_handle(conts,sectid))
         
         return output
