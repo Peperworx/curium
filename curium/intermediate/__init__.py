@@ -305,10 +305,10 @@ class CodeGen:
         jump_table = {
             "==":"je",
             "!=":"jne",
-            ">":"jg",
-            ">=":"jge",
-            "<":"jl",
-            "<=":"jle"
+            ">":"ja",
+            ">=":"jae",
+            "<":"jb",
+            "<=":"jbe"
         }
         
         return [
