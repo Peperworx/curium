@@ -9,6 +9,23 @@ import os
 # Pylance errors go byby
 _ = lambda v: print(v)
 
+
+# A set of all commands that are transpiled directly to asm
+directasm = {
+    "add",
+    "sub",
+    "mul",
+    "div",
+    "jmp",
+    "cmp",
+    "je",
+    "jne",
+    "ja",
+    "jae",
+    "jb",
+    "jbe",
+}
+
 class Lexer(SlyLexer):
     tokens = {
         NAME,
@@ -294,13 +311,95 @@ class CodeGen:
 
     def __init__(self):
         self.ids = []
+        self.names = {}
 
+    def allocate_temporary(self):
+        pass
+
+    def dirasm(self,inst):
+        code = []
+
+        # Iterate over each argument, checking for stack refs
+        args = []
+        for i in inst[1]:
+            # If it is a number, resolve
+            if i[0] == "number":
+                args.append(str(i[1]))
+                continue
+            # Name, resolve
+            elif i[0] == "udefname":
+                # TODO: Resolve
+                continue
+            # Stack, we need a temporary
+            elif i[0] == "stack":
+                pass
+            print(i)
+        return code
+        
+
+    def compile_instruction(self, inst):
+        data = []
+        bss = []
+        code = []
+        # If it is a direct asm call, transpile it
+        if inst[0] in directasm:
+            code.extend(self.dirasm(inst))
+
+        return data,bss,code
+
+    def generate(self, input):
+        data = []
+        bss = []
+        code = []
+
+        # Iterate over every instruction
+        for inst in input:
+            # Get the type
+            typ = inst[0]
+
+            # if it is a label
+            if typ == "label":
+                # Add it to the code segment
+                # Generate an id
+                id = random.randint(0,0xFFFFFFFF)
+                while id in self.ids:
+                    id = random.randint(0,0xFFFFFFFF)
+                self.ids.append(id)
+
+                # Add the name
+                self.names[inst[1]] = f"{inst[1].lstrip('%')}_{id}"
+
+                # Retrieve the name
+                code += [
+                    f"{self.names[inst[1]]}:"
+                ]
+            
+            # if it is an instruction
+            if typ == "instruction":
+                d,b,c = self.compile_instruction(inst[1:])
+
+                # Add the outputs to the respective sections
+                data += d
+                bss += b
+                code += c
+        
+
+
+        out = (
+            "\n".join(data) + "\n" +
+            "\n".join(bss) + "\n" +
+            "\n".join(code) + "\n"
+        )
+        print(out)
 
     def gen(self,input,sectid=""):
-        return self.parse(input,isfirst=True)
+        parsed = self.parse(input,isfirst=True)
+        generated = self.generate(parsed)
+        return generated
     
     def inst_handle(self, conts):
         return ["instruction",conts[0][1],conts[1][1:]]
+    
     def jump_from_condition(self,v,section):
         jump_table = {
             "==":"je",
@@ -318,8 +417,6 @@ class CodeGen:
                 [["udefname",section]]
             ]
         ]
-
-
 
     def conditional_handle(self,cond,sectid=""):
         """
