@@ -25,6 +25,12 @@ directasm = {
     "jb",
     "jbe",
 }
+arithmeticasm = {
+    "add",
+    "sub",
+    "mul",
+    "div"
+}
 
 class Lexer(SlyLexer):
     tokens = {
@@ -312,15 +318,52 @@ class CodeGen:
     def __init__(self):
         self.ids = []
         self.names = {}
+        self.numtemps = 0
+        self.id = random.randint(0,0xFFFF)
 
     def allocate_temporary(self):
-        pass
+        self.numtemps += 1
+
+        return f"temp_{self.id}_{self.numtemps}"
+
+    def inst(self, name, arguments):
+        """
+            Yet another layer. This takes an instruction name,
+            and the list of arguments, and expects us to generate valid assembly code
+            out of it. For example:
+
+            add 1,2
+
+            would turn into:
+            
+            mov rax, 1
+            add rax, 2
+            push rax
+
+        """
+        code = []
+        
+        # If it is arithmetic
+        if name in arithmeticasm:
+            # Move first to rax
+            code += [
+                f"mov rax, {arguments[0]}",
+                f"{name} rax, {','.join(arguments[1:])}",
+                f"push rax"
+            ]
+        else:
+            code += [
+                f"{name} {','.join(arguments)}"
+            ]
+        
+        return code
 
     def dirasm(self,inst):
         code = []
 
         # Iterate over each argument, checking for stack refs
         args = []
+        tempsneeded = 0
         for i in inst[1]:
             # If it is a number, resolve
             if i[0] == "number":
@@ -329,11 +372,29 @@ class CodeGen:
             # Name, resolve
             elif i[0] == "udefname":
                 # TODO: Resolve
+                args.append(i[1])
                 continue
             # Stack, we need a temporary
             elif i[0] == "stack":
+                # Allocate temporary
+                tempsneeded += 1
+
+                # Pop to temporary
+                code += [
+                    f"pop temp_{self.id}_{tempsneeded}"
+                ]
+
+                # Append arguments
+                args.append(f"[temp_{self.id}_{tempsneeded}]")
+                
                 pass
-            print(i)
+        self.numtemps = max(tempsneeded,self.numtemps)
+        
+        
+
+        # Generate instruction
+        code += self.inst(inst[0],args)
+        
         return code
         
 
@@ -345,6 +406,7 @@ class CodeGen:
         if inst[0] in directasm:
             code.extend(self.dirasm(inst))
 
+        
         return data,bss,code
 
     def generate(self, input):
@@ -367,8 +429,10 @@ class CodeGen:
                 self.ids.append(id)
 
                 # Add the name
-                self.names[inst[1]] = f"{inst[1].lstrip('%')}_{id}"
-
+                if inst[1] != "_start":
+                    self.names[inst[1]] = f"{inst[1].lstrip('%')}_{id}"
+                else:
+                    self.names[inst[1]] = inst[1]
                 # Retrieve the name
                 code += [
                     f"{self.names[inst[1]]}:"
@@ -384,10 +448,16 @@ class CodeGen:
                 code += c
         
 
+        # Handle temporaries
+        for i in range(self.numtemps):
+            bss.append(f"temp_{self.id}_{i} resq 1")
 
         out = (
+            "section .data\n" +
             "\n".join(data) + "\n" +
+            "section .bss\n" +
             "\n".join(bss) + "\n" +
+            "section .text\n" +
             "\n".join(code) + "\n"
         )
         print(out)
@@ -557,8 +627,8 @@ class CodeGen:
         name = f"{f'{sectid}_' if sectid != '' else ''}{conts[1][1]}"
 
         # Add the skip jump
-        out.append(["instruction","jmp",["udefname",f"%end_{name}"]])
-
+        out.append(["instruction","jmp",[["udefname",f"%end_{name}"]]])
+        
         # Create a label of function name
         out.append(["label",f"%{name}"])
         
@@ -569,7 +639,7 @@ class CodeGen:
         out.append(["instruction","ret",[]])
 
         # Add the end label
-        out.append(["label",f"%end_{name}"])
+        out.append(["label",f"%end_{name.lstrip('%')}"])
 
         return out
 
