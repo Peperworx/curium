@@ -24,6 +24,10 @@ directasm = {
     "jae",
     "jb",
     "jbe",
+    "push",
+    "pop",
+    "call",
+    "ret"
 }
 arithmeticasm = {
     "add",
@@ -318,6 +322,7 @@ class CodeGen:
     def __init__(self):
         self.ids = []
         self.names = {}
+        self.structures = {}
         self.numtemps = 0
         self.id = random.randint(0,0xFFFF)
 
@@ -387,7 +392,7 @@ class CodeGen:
                 # Append arguments
                 args.append(f"[temp_{self.id}_{tempsneeded}]")
                 
-                pass
+                
         self.numtemps = max(tempsneeded,self.numtemps)
         
         
@@ -405,7 +410,18 @@ class CodeGen:
         # If it is a direct asm call, transpile it
         if inst[0] in directasm:
             code.extend(self.dirasm(inst))
-
+        elif inst[0] == "struct":
+            # Handle Structures
+            pass
+        elif inst[0] == "member":
+            # Handle Members
+            pass
+        elif inst[0] == "define":
+            # Handle variable definition
+            pass
+        else:
+            print(inst)
+            print(f"[bold red]ERROR: Invalid Instruction {inst[0]} [/bold red]")
         
         return data,bss,code
 
@@ -460,7 +476,8 @@ class CodeGen:
             "section .text\n" +
             "\n".join(code) + "\n"
         )
-        print(out)
+        
+        return out
 
     def gen(self,input,sectid=""):
         parsed = self.parse(input,isfirst=True)

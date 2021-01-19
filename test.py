@@ -63,7 +63,8 @@ def test_intermediate(filename):
     
     codegen = intermediate.CodeGen()
     gen = codegen.gen(parsed)
-    print(gen)
+    with open(filename+".asm","w+") as f:
+        f.write(gen)
 
 
 if __name__ == "__main__":
