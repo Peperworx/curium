@@ -1,1 +1,0 @@
-## Curium library entry
