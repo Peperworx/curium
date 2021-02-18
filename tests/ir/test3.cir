@@ -1,0 +1,13 @@
+struct(%a);
+member(%a, %b, u32);
+member(%a, %c, ptr:%a);
+member(%a, %d, u32, 0);
+
+define(%inst_of_a, %a);
+
+define(%e, u32);
+
+
+add(%inst_of_a.b, %inst_of_a.d);
+
+pop(%e);

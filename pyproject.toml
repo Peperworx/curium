@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "peperworx-lang"
+version = "0.0.0"
+description = "A basic, C-like language written using python"
+authors = ["Riley Wilton <meetingprince34@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+toml = "^0.10.2"
+sly = "^0.4"
+pydantic = "^1.7.3"
+parsimonious = "^0.8.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
