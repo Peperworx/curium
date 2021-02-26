@@ -71,7 +71,8 @@ class Lex(Lexer):
         RBRACE,
         COMMA,
         SEMICOLON,
-        COLON
+        COLON,
+        DEF
     }
     # Literals, because the builtin function cant have precedence
     LPAREN          = r"\("
@@ -94,6 +95,7 @@ class Lex(Lexer):
     NAME['while']   = WHILE
     NAME['for']     = FOR
     NAME['return']  = RETURN
+    NAME['def'] = DEF
     
 
     # Token for integers

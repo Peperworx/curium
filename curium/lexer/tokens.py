@@ -60,3 +60,4 @@ if True:
     NEWLINE = ""
     INDIRECTION = ""
     ADDR = ""
+    DEF = ""

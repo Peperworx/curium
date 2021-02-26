@@ -1,7 +1,7 @@
-from curium import preprocessor
-from curium import intermediate
+
 from curium import parser
 from curium import lexer
+from curium import preprocessor
 from rich.console import Console
 from rich import print
 import json
@@ -51,28 +51,11 @@ def test_file(filename: str,result: str):
         f.write(parsedump)
 
 
-def test_intermediate(filename):
-    lex = intermediate.Lexer()
-
-    with open(filename) as f:
-        read = f.read()
-    
-    parse = intermediate.Parser()
-
-    parsed = parse.parse(lex.tokenize(read))
-    
-    codegen = intermediate.CodeGen()
-    gen = codegen.gen(parsed)
-    with open(filename+".asm","w+") as f:
-        f.write(gen)
 
 
 if __name__ == "__main__":
-    for i in range(4):
+    for i in range(1):
         print(f"Test {i}")
         test_file(f"tests/curium/test{i}.cm",f"tests/curium/test{i}.cm.res")
     
-    # Testing intermediate language
-    for i in range(6):
-        print(f"IR Test {i}")
-        test_intermediate(f"tests/ir/test{i}.cir")
+    
