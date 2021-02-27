@@ -1,4 +1,0 @@
-struct(%a);
-member(%a, %b, u32);
-member(%a, %c, ptr:%a);
-member(%a, %d, u32, 0);
