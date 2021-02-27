@@ -23,7 +23,7 @@ The tutorial is divided into several steps. This is the first step.
 Every good language documentation starts off with a hello world sample:
 
 ```cpp
-function[int]: main(){
+def main() -> int{
     print("Hello,World!\n");
 
     return 0;
@@ -36,7 +36,7 @@ Lets examine the code snippet above:
 
 First thing to notice is the function declaration. Functions are declared like this:
 ```cpp
-function[return_type]: function_name(type arg1, type arg2,...){
+def function_name(type arg1, type arg2,...) -> return_type{
     // Code body
     return return_value;
 }
@@ -75,7 +75,7 @@ Every true programming language has variables. Variables can store dynamic value
 Lets try defining some variables:
 
 ```cpp
-function[int]: main(){
+def main() -> int{
     // Here we define the variable a as 7
     int: a = 7;
 
@@ -103,17 +103,8 @@ These work by appending brackets with arguments between them:
 list[int]: list_of_ints = [0,1,2,3];
 ```
 
-Even though these function similar to C++ templates, they are not realy templates.
-They are calculated at both compile time and at runtime. Compile time for making sure that typing rules are being filed, ant at runtime for actually performing operations with the target.
+One thing to note is that *every* variable is a pointer, including functions.
 
-If python were statically typed, this would be similar to this python code:
-
-```python
-class TemplateTaker:
-    def __init__(self,arg_type, arg):
-        self.arg: arg_type = arg
-
-```
 
 ## Structures
 
@@ -136,8 +127,10 @@ Here is an example of a struct for a linked list:
 ```cpp
 struct listItem {
     int: contents;
-    listItem*: next;
+    listItem: next;
 }
 ```
 
-Here you can also see what is called a pointer type. These function like in C and we will overview them later.
+
+
+
