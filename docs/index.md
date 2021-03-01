@@ -9,7 +9,7 @@ Curium is different from most programming languages. Curium in and of itself wil
 - Calling Convention
 - Operators
 
-
+Check out some of the core specification before moving on: [code](core)
 
 
 ## Language Structure
