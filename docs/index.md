@@ -152,7 +152,7 @@ define i32 @main() {
     
     ; Load members
     %v.a = getelementptr %some_struct, %some_struct* %v, i32 0, i32 0
-    %v.b = getelementptr %some_struct, %some_struct* %v, i32 1, i32 0
+    %v.b = getelementptr %some_struct, %some_struct* %v, i32 0, i32 1
     
     ; Store default values
     store i32 1234, i32* %v.a
@@ -162,4 +162,18 @@ define i32 @main() {
     %0 = load load i32, i32* %v.a
     ret i32 %0
 }
+```
+
+### Casts
+
+Casts are done like in C:
+```cpp
+let mut v:i32* = (i32*)0xb8000;
+```
+
+And this translates to the following in LLVM:
+
+```LLVM
+%0 = bitcast i32 0xb8000 to i32*
+%v = %0
 ```
