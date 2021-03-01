@@ -120,5 +120,46 @@ Global constants are slightly different. Here is an example:
 const v:i32 = 1234;
 ```
 
+This maps to the following in LLVM:
+```LLVM
+@v = internal constant i32 1234
+```
+
 Constants can never be changed, and cannot be shadowed.
 
+### Structures
+
+Structures are simple, and almost exactly like C (excepting the variable declarations)
+```c++
+struct some_struct {
+    let a: i32 = 1234;
+    let b: i32 = 5678;
+}
+
+def main() -> i32 {
+    let v: some_struct;
+    return v.a;
+}
+```
+
+This maps to the following LLVM:
+```LLVM
+%some_struct = type {i32, i32}
+
+define i32 @main() {
+    ; Create the structure
+    %v = alloca some_struct
+    
+    ; Load members
+    %v.a = getelementptr %some_struct, %some_struct* %v, i32 0, i32 0
+    %v.b = getelementptr %some_struct, %some_struct* %v, i32 1, i32 0
+    
+    ; Store default values
+    store i32 1234, i32* %v.a
+    store i32 5678, i32* %v.b
+    
+    ; Return the value
+    %0 = load load i32, i32* %v.a
+    ret i32 %0
+}
+```
