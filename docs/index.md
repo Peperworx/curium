@@ -89,7 +89,27 @@ let mut v:i16* = (i16*)0xb8000;
 
 Accessing offset:
 ```cpp
-v[0] = ('X'<<8)|0x0f
+v[0] = ('X'<<8)|0x0f;
+```
+
+Getting value:
+```cpp
+let v: i16 = *v;
+```
+
+Getting address:
+```cpp
+let v: i16 = &v;
+```
+
+Setting value:
+```cpp
+*v = ('Y'<<8)|0x0f;
+```
+
+Setting address:
+```cpp
+v = (i16*)0xb8000
 ```
 
 **NOTE** The above code will not work on anything other than bare metal x86.
