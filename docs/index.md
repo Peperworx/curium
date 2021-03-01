@@ -14,174 +14,96 @@ Curium is different from most programming languages. Curium in and of itself wil
 
 ## Language Structure
 
-In Curium, the structure of a program is flexible. Curium does not force the programmer to use object oriented programming, or any other method. It is closer to C++ in that respect.
+In Curium, the structure of a program is flexible. Curium does not force the programmer to use object oriented programming, or any other method. It is closer to C++ in that respect. Note that this page is something of a cheat sheet. This only contains some code snippets that explain the syntax a small amount, but do not explain why or how things work. Each element expressed here will have further documentation in the future. Variables take largely after Rust. Functions and classes take largely after Python (this will be explained in the individual documentation)
 
 ### Functions
-
-The one of the most basic constructs in curium is a function. The calling convention is simple. First push a number of arguments to the stack, then push the arguments one by one, in the order they are defined in the function header. Lets take a look at a Curium function:
+Defining:
 ```cpp
-def main() -> i32{
-    return 0;
+def function_name() -> return_type{
+    
 }
 ```
-This is the most basic of functions, and it does absolutely nothing. Here is what this function definition looks like in LLVM:
-```LLVM
-define i32 @main(){
-    ret i32 0;
-}
-```
-
-We can also call functions like so:
+Calling:
 ```cpp
-def function2() -> i32 {
-    return 0;
-}
-
-def main() -> i32 {
-    return function2();
-}
-```
-
-Unoptimized, this turns into this LLVM code:
-
-```LLVM
-
-define i32 @function2() {
-    ret i32 0
-}
-
-define i32 @main() {
-    %0 = call i32 @function2()
-    ret i32 %0
-}
+function_name(args...);
 ```
 
 
 ### Variables
 
-Variables are also some of the most simple constructs available.
-
-In Curium, variables are defined like so:
+Defining non-mutable:
 ```rust
 let v: i32 = 1234;
 ```
-This is where Curium is similar to Rust. Variables are immutable unless defined as mutable. This is simply a construct of Curium, and variables are implemented the same in LLVM.
-
-Global variables and local variables are defined in the same way, just like C.
-
-This translates to the following LLVM.
-
-Global:
-```LLVM
-@v = global i32 1234
-```
-Local:
-```LLVM
-%v = alloca i32
-store i32 1234, i32* %v
-```
-
-In Curium, mutable variables can be defined almost like rust:
+Defining mutable:
 ```rust
 let mut v:i32 = 1234;
 ```
 
-Just like rust, variables can also be shadowed:
+Shadowing:
 
 ```rust
 let v:i32 = 1234;
 let v:i32 = 5678;
 ```
-
-And this translates to LLVM like so:
-```LLVM
-%v.0 = alloca i32
-store i32 1234, i32* v
-%v.1 = alloca i32
-store i32 5678, i32* v
-```
-The most recent revision of the variable will be used. Global variables may not be shadowed as they can also be defined as external.
+Global variables can not be shadowed.
 
 ### Constants
 
-Constant values come in two variants: inline and global.
-
-Constants are always private, and can not be made external.
-
-Inline constants are simple, when assigning a value to a variable, you use an inline constant:
+Inline constants:
 ```rust
 let v: i32 = 1234;
              ^^^^
 ```
 The arrows point to the inline constant.
 
-Global constants are slightly different. Here is an example:
+Global constants (outside of any scope):
 ```cpp
 const v:i32 = 1234;
-```
-
-This maps to the following in LLVM:
-```LLVM
-@v = internal constant i32 1234
 ```
 
 Constants can never be changed, and cannot be shadowed.
 
 ### Structures
 
-Structures are simple, and almost exactly like C (excepting the variable declarations)
+Defining:
 ```c++
 struct some_struct {
     let a: i32 = 1234;
     let b: i32 = 5678;
 }
-
-def main() -> i32 {
-    let v: some_struct;
-    return v.a;
-}
 ```
 
-This maps to the following LLVM:
-```LLVM
-%some_struct = type {i32, i32}
-
-define i32 @main() {
-    ; Create the structure
-    %v = alloca some_struct
-    
-    ; Load members
-    %v.a = getelementptr %some_struct, %some_struct* %v, i32 0, i32 0
-    %v.b = getelementptr %some_struct, %some_struct* %v, i32 0, i32 1
-    
-    ; Store default values
-    store i32 1234, i32* %v.a
-    store i32 5678, i32* %v.b
-    
-    ; Return the value
-    %0 = load load i32, i32* %v.a
-    ret i32 %0
-}
+Using:
+```c++
+let v: some_struct;
+let a: i32 = v.a;
 ```
+
+### Pointers
+
+Defining:
+```cpp
+let mut v:i16* = (i16*)0xb8000;
+```
+
+Accessing offset:
+```cpp
+v[0] = ('X'<<8)|0x0f
+```
+
+**NOTE** The above code will not work on anything other than bare metal x86.
 
 ### Casts
 
-Casts are done like in C:
+Casting:
 ```cpp
 let mut v:i32* = (i32*)0xb8000;
 ```
 
-And this translates to the following in LLVM:
-
-```LLVM
-%0 = bitcast i32 0xb8000 to i32*
-%v = %0
-```
-
 ### Classes
 
-Classes work similar to C++. At their core, they are simply structures with values. Each class has a `self` value that is passed to it, just like in Python. This self value is a pointer to the current instance of the class. Here is an example class:
-
+Creating:
 ```cpp
 class class_name {
     let private a:i32 = 20;
@@ -190,6 +112,8 @@ class class_name {
     }
 }
 ```
-
-This translates the same as a struct, but also defines some functions that are members of that struct (so, get_a would be mangled as a member of class_name)
-
+Using:
+```cpp
+let mut v:class_name;
+let a:i32 = v.get_a();
+```
