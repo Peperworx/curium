@@ -177,3 +177,19 @@ And this translates to the following in LLVM:
 %0 = bitcast i32 0xb8000 to i32*
 %v = %0
 ```
+
+### Classes
+
+Classes work similar to C++. At their core, they are simply structures with values. Each class has a `self` value that is passed to it, just like in Python. This self value is a pointer to the current instance of the class. Here is an example class:
+
+```cpp
+class class_name {
+    let private a:i32 = 20;
+    def get_a(self:class_name*) -> i32 {
+        return self->name;
+    }
+}
+```
+
+This translates the same as a struct, but also defines some functions that are members of that struct (so, get_a would be mangled as a member of class_name)
+
