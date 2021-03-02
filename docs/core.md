@@ -2,7 +2,7 @@
 
 This page defines some of the core Curium specification, such as name mangling.
 
-## Name Mangling
+## Names
 
 Names are mangled for a variety of reasons:
 - Keeping namespaces
@@ -33,3 +33,13 @@ namespace hello {
 
 This is a super basic example, however names can also be determined by how it is being called. This allows us to overload return types as well as arguments.
 
+## Rules for Names
+
+1. Names may not start with a number.
+2. Names starting with an underscore may not have an immediate capital letter.
+3. Names may contain any alphanumeric character.
+
+The regular expression for names is as follows:
+```regex
+^(?!_[A-Z])[a-zA-Z_][a-zA-Z0-9_]*$
+```
