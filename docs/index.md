@@ -17,6 +17,8 @@ Check out some of the core specification before moving on: [core](core)
 In Curium, the structure of a program is flexible. Curium does not force the programmer to use object oriented programming, or any other method. It is closer to C++ in that respect. Note that this page is something of a cheat sheet. This only contains some code snippets that explain the syntax a small amount, but do not explain why or how things work. Each element expressed here will have further documentation in the future. Variables take largely after Rust. Functions and classes take largely after Python (this will be explained in the individual documentation)
 
 ### Functions
+[Documentation](functions)
+
 Defining:
 ```cpp
 def function_name() -> return_type{
