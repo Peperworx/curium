@@ -9,6 +9,16 @@ code = {
             "name": "main",
             "contents": [
                 {
+                    "type": "vardef",
+                    "mutable": True,
+                    "name": "test",
+                    "var_type": "i32",
+                    "value": {
+                        "type":"integer_literal",
+                        "value":"1234"
+                    }
+                },
+                {
                     "type": "statement",
                     "name": "return",
                     "arguments": [
