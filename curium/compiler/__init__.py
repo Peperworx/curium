@@ -50,7 +50,7 @@ class Compiler:
             self.symbol_table[in_tree["name"]] = [val]
 
         # Now create the variable
-        var = f'@{val["name"]} = global {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}'
+        var = f'@{val["name"]}.{len(self.symbol_table[val["name"]])-1} = global {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}'
 
         # And return
         return var
@@ -77,10 +77,10 @@ class Compiler:
         # Now create the variable
         ident = '    '*nesting
         if in_tree["mutable"]:
-            var =  f'{ident}%{val["name"]} = alloca {self.map_type(val["second_type"])}\n'
-            var += f'{ident}store {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}, {self.map_type(val["second_type"])}* {val["name"]}'
+            var =  f'{ident}%{val["name"]}.{len(self.symbol_table[val["name"]])-1} = alloca {self.map_type(val["second_type"])}\n'
+            var += f'{ident}store {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}, {self.map_type(val["second_type"])}* {val["name"]}.{len(self.symbol_table[val["name"]])-1}'
         else:
-            var = f'{ident}%{val["name"]} = {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}'
+            var = f'{ident}%{val["name"]}.{len(self.symbol_table[val["name"]])-1} = {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}'
 
         # And return
         return var
