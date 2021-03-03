@@ -22,7 +22,10 @@ code = {
                     "type": "statement",
                     "name": "return",
                     "arguments": [
-                        "0"
+                        {
+                            "type":"name",
+                            "value":"test"
+                        }
                     ]
                 }
             ]
