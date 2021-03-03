@@ -16,10 +16,22 @@ code = {
                     ]
                 }
             ]
+        },
+        {
+            "type": "vardef",
+            "mutable": False,
+            "name": "test",
+            "var_type": "i32",
+            "value": {
+                "type":"integer_literal",
+                "value":"1234"
+            }
         }
     ]
 }
 
-compiled = compiler.compile(code)
+c = compiler.Compiler()
+
+compiled = c.compile(code)
 
 print(compiled)

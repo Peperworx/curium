@@ -1,32 +1,87 @@
+class Compiler:
 
-def map_type(typ):
-    return typ
+    def __init__(self):
+        self.symbol_table = {}
 
-def compile(in_tree, out = "", parent=None, nesting = 0):
-    """
-        Recurses over the tree, generating LLVM code.
-    """
-    
-    t_type = in_tree["type"]
+    def map_type(self, typ):
+        return typ
 
-    if t_type == "body":
+
+    def resolve_body(self, in_tree, out = "", parent=None, nesting = 0):
         for s in in_tree["statements"]:
-            out = compile(s,out, parent=parent, nesting=nesting)
-            return out
-    elif t_type == "funcdef":
+            out = self.compile(s, out=out, parent=parent, nesting=nesting)
+        return out
+
+    def resolve_funcdef(self, in_tree, out = "", parent=None, nesting = 0):
         out += "\n"
-        out += f"define {map_type(in_tree['returns'])} {in_tree['name']} ()"+"{\n"
+        out += f"define {self.map_type(in_tree['returns'])} {in_tree['name']} ()"+"{\n"
         nesting += 1
         for s in in_tree["contents"]:
-            out = compile(s, out, parent = in_tree, nesting=nesting)
+            out = self.compile(s, out, parent = in_tree, nesting=nesting)
             out += "\n"
-        out += "}"
+        out += "}\n"
         return out
-    elif t_type == "statement":
-        if in_tree["name"] == "return":
-            nst = '    '*nesting
-            out += f"{nst}ret {parent['returns']} {in_tree['arguments'][0]}"
-            return out
-    else:
-        print(t_type)
+
+    def resolve_return(self, in_tree, out = "", parent=None, nesting = 0):
+        nst = '    '*nesting
+        out += f"{nst}ret {parent['returns']} {in_tree['arguments'][0]}"
+        return out
+    
+    def resolve_value(self, value):
+        return value["value"]
+
+    def create_global_variable(self, in_tree):
+        """
+            Constructs an LLVM global variable
+        """
+
+        val = {
+            "type":"variable",
+            "second_type": in_tree["var_type"],
+            "mutable": in_tree["mutable"],
+            "name": in_tree["name"],
+            "global":True
+        }
+
+        # If it is in the symbol table, add
+        if in_tree["name"] in self.symbol_table.keys():
+            self.symbol_table[in_tree["name"]].append(val)
+        else:
+            self.symbol_table[in_tree["name"]] = [val]
+
+        # Now create the variable
+        var = f'@{val["name"]} = global {self.map_type(val["second_type"])} {self.resolve_value(in_tree["value"])}'
+
+        # And return
+        return var
+
+    def resolve_vardef(self, in_tree, out = "", parent=None, nesting = 0):
+        print(in_tree)
+        if nesting == 0:
+            out += self.create_global_variable(in_tree)
+        else:
+            ...
+            #out += self.create_local_variable(in_tree)
+        return out
+
+    def compile(self, in_tree, out = "", parent=None, nesting = 0):
+        """
+            Recurses over the tree, generating LLVM code.
+        """
+
+        t_type = in_tree["type"]
+
+        if t_type == "body":
+            # Resolve a body
+            out = self.resolve_body(in_tree, out=out, parent=parent, nesting=nesting)
+        elif t_type == "funcdef":
+            out = self.resolve_funcdef(in_tree, out=out, parent=parent, nesting=nesting)
+        elif t_type == "statement":
+            if in_tree["name"] == "return":
+                out = self.resolve_return(in_tree, out=out, parent=parent, nesting=nesting)
+        elif t_type == "vardef":
+            out += "\n"
+            out = self.resolve_vardef(in_tree, out=out, parent=parent, nesting=nesting)
+        else:
+            print(in_tree)
         return out
