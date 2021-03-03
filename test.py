@@ -2,7 +2,7 @@ from curium import compiler
 
 code = {
     "type": "body",
-    "statements": [
+    "contents": [
         {
             "type": "funcdef",
             "returns": "i32",
