@@ -35,14 +35,17 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    // Check argument
-    if (string(argv[1]) == "assemble"){
-        Assembler *a = new(Assembler);
-        return a->assemble(argc,argv);
-    } else {
-        help();
+    try {
+        // Check argument
+        if (string(argv[1]) == "assemble"){
+            Assembler *a = new(Assembler);
+            return a->assemble(argc,argv);
+        } else {
+            help();
+        }
+    } catch (int e) {
+        return e;
     }
-
 
 }
 
