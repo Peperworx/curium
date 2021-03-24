@@ -37,8 +37,8 @@ int main(int argc, char** argv) {
 
     // Check argument
     if (string(argv[1]) == "assemble"){
-        assembler asm = new(assembler);
-        return asm::assemble(argc,argv);
+        Assembler *a = new(Assembler);
+        return a->assemble(argc,argv);
     } else {
         help();
     }
