@@ -38,7 +38,8 @@ class CuriumLexer(Lexer):
         HEXIDECIMAL,
         BINARY,
         OCTAL,
-        DECIMAL
+        DECIMAL,
+        COMMA
     }
     
     # We do not "ignore" whitespace. We simple make note of it, and move on
@@ -128,4 +129,6 @@ class CuriumLexer(Lexer):
     # And colons are used in variable definitions
     COLON = r':'
     
+    # Commas are used to delimit lists
+    COMMA = r','
     

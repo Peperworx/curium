@@ -9,6 +9,18 @@ def strip_whitespace(inlex):
         if i.type not in ["SPACE","NEWLINE"]:
             yield i
 
+def print_pretty(t,level=0,indent=4):
+    """
+        Pretty prints a parse tree
+    """
+    if not isinstance(t,tuple):
+        print(f"{' '*indent*level}{t}")
+        return
+    print(f"{' '*indent*level}(")
+    for i in t:
+        print_pretty(i,level+1,indent)
+    print(f"{' '*indent*level})")
+
 if __name__ == '__main__':
     # Initialize a lexer class
     lexer = clex.CuriumLexer()
@@ -52,4 +64,4 @@ if __name__ == '__main__':
     # Parse
     parser = cparse.CuriumParser()
 
-    print(parser.parse(strip_whitespace(lexer.tokenize(tolex))))
+    print_pretty(parser.parse(strip_whitespace(lexer.tokenize(tolex))))
