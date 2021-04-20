@@ -1,1 +1,3 @@
-def main
+def main() -> int {
+    return 0;
+}

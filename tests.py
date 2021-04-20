@@ -21,20 +21,29 @@ class TestLexer(unittest.TestCase):
         # Print newline
         print("\n")
 
+        # Initialize linenumber and column tracking
+        lineno = 1
+        col = 1
+
         # Iterate over the lexed code
         for t in lexer.tokenize(tolex):
 
             # Add the value to reconstructed
-            reconstructed += t.value
+            reconstructed += str(t.value)
             
             # Print the value, and relevant information
-            print(f"{escape_str(t.value)}: {t.type} {t.lineno}:{lexer.col}")
+            print(f"{escape_str(t.value)}: {t.type} {lineno}:{col}")
+
+            col += len(t.value)
 
             # Handle basic column tracking
-            if t.value == '\n' or not lexer.col:
-                lexer.col = 1
-            else:
-                lexer.col += len(t.value)
+            if t.value == "\n":
+                lineno += 1
+                col = 1
+
+            
+            
+            
 
         # If it is perfectly reconstructed, then the lexer did not error
         self.assertEqual(tolex, reconstructed, "Reconstructed does not match original")

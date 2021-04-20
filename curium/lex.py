@@ -13,7 +13,32 @@ class CuriumLexer(Lexer):
         NEWLINE,
         NAME,
         NUMBER,
-        STRING
+        STRING,
+        LPAREN,
+        RPAREN,
+        LBRACE,
+        RBRACE,
+        LBRACK,
+        RBRACK,
+        ARROW,
+        DEF,
+        CHAR,
+        UCHAR,
+        SHORT,
+        USHORT,
+        INT,
+        UINT,
+        LONG,
+        ULONG,
+        FLOAT,
+        DOUBLE,
+        RETURN,
+        SEMICOLON,
+        COLON,
+        HEXIDECIMAL,
+        BINARY,
+        OCTAL,
+        DECIMAL
     }
     
     # We do not "ignore" whitespace. We simple make note of it, and move on
@@ -35,6 +60,36 @@ class CuriumLexer(Lexer):
     # notation for other numeric types (e.x. 0xF00D)
     NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
+
+    # Built in names
+
+    # There are a few built in names
+
+    # There are generally called keywords
+    # We will define then here
+
+
+
+    NAME['def'] = DEF # For function definition
+
+    # Integer and floating point datatype names
+    NAME['char'] = CHAR # Signed and unsigned char (8bit)
+    NAME['uchar'] = UCHAR
+
+    NAME['short'] = SHORT # Signed and unsigned short (16 bits)
+    NAME['ushort'] = USHORT
+
+    NAME['int'] = INT # Signed and unsigned integer (32 bits)
+    NAME['uint'] = UINT
+
+    NAME['long'] = LONG # Signed and unsigned long (64 bits)
+    NAME['ulong'] = ULONG
+
+    NAME['float'] = FLOAT # Floating point number (32 bits)
+    NAME['double'] = DOUBLE # Double precision floating point number (64 bits)
+
+    NAME['return'] = RETURN # The return keyword
+
     # Numbers come in different forms
 
     # The four that will be implemented first 
@@ -44,26 +99,14 @@ class CuriumLexer(Lexer):
     # This is the main number function
     # It converts all numbers to decimal
 
-    @_(
-        r'0x[0-9a-fA-F]+',
-        r'0b[0-1]+',
-        r'0o[0-7]+',
-        r'[0-9]+')
-    def NUMBER(self, t):
-
-        # Check and convert for each type
-        if t.value.startswith("0x"):
-            t.value = int(t.value[2:],16)
-        elif t.value.startswith("0b"):
-            t.value = int(t.value[2:],2)
-        elif t.value.startswith("0o"):
-            t.value =  int(t.value[2:],8)
-        else:
-            t.value = int(t.value[2:])
-
-        # Return T
-        return t
     
+    HEXIDECIMAL = r'0x[0-9a-fA-F]+'
+    BINARY = r'0b[0-1]+'
+    OCTAL = r'0o[0-7]+'
+    DECIMAL = r'[0-9]+'
+    
+    # Strings are another type. Strings CAN be multiline
+    STRING = r'\"(?s).*?\"'
 
     # Brackets are essential to curium
     # They denote the start and end of sections of code, lists, etc.
@@ -71,9 +114,18 @@ class CuriumLexer(Lexer):
     RPAREN = r"\)"
     LBRACE = r"{"
     RBRACE = r"}"
-    LBRACK = r"["
-    RBRACk = r"]"
+    LBRACK = r"\["
+    RBRACK = r"\]"
 
+    # The arrow denotes two things:
+    # Function return types
+    # And indirected member access
+    ARROW = r"\->"
+
+    # Semicolons are used to end instructions
+    SEMICOLON = r';'
+
+    # And colons are used in variable definitions
+    COLON = r':'
     
-    # Strings are another type. Strings CAN be multiline
-    STRING = r'\"(?s).*?\"'
+    
