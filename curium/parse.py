@@ -36,6 +36,14 @@ class CuriumParser(Parser):
     def expr(self, v):
         return v[1]
 
+    # Function calls
+    @_("name LPAREN tuple RPAREN")
+    def expr(self, v):
+        return ('function_call', v[0], v[2])
+    @_("name LPAREN RPAREN")
+    def expr(self,v):
+        return ('function_call', v[0], ('tuple',))
+
     # Type
     @_("number","string","name","tuple")
     def expr(self,v):
