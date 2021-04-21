@@ -1,4 +1,4 @@
 def main() -> int {
-    somefunc();
+    somefunc(1,2,3);
     return 0;
 }
