@@ -5,6 +5,13 @@ from .tokens import *
 class CuriumParser(Parser):
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
+    @_("file_component", "file_component file")
+    def file(self, v):
+        return (v[0],) if len(v) == 1 else (v[0], *v[1][1:])
+
+    @_("function_def","statement","statements")
+    def file_component(self,v):
+        return v[0]
 
     @_("DEF name LPAREN tuple RPAREN ARROW name LBRACE statements RBRACE")
     def function_def(self,v):
@@ -17,6 +24,10 @@ class CuriumParser(Parser):
     @_("statement", "statement statements")
     def statements(self,v):
         return ('statements', v[0]) if len(v) == 1 else ('statements', v[0], *v[1][1:])
+
+    @_("function_def")
+    def statement(self,v):
+        raise Exception("Subfunctions not allowed")
 
     @_("RETURN expr SEMICOLON")
     def statement(self, v):

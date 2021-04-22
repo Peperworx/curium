@@ -1,4 +1,9 @@
 def main() -> int {
-    somefunc(1,2,3);
+    somefunc();
+    
     return 0;
+}
+
+def somefunc() -> int {
+    return 0;        
 }
