@@ -1,5 +1,6 @@
 from curium import lex as clex
 from curium import parse as cparse
+from curium import compile as ccompile
 
 def strip_whitespace(inlex):
     """
@@ -65,3 +66,8 @@ if __name__ == '__main__':
     parser = cparse.CuriumParser()
 
     print_pretty(parser.parse(strip_whitespace(lexer.tokenize(tolex))))
+    print("\n\n")
+    # Compile
+    compiler = ccompile.CuriumCompiler()
+
+    print(compiler.compile(parser.parse(strip_whitespace(lexer.tokenize(tolex)))))

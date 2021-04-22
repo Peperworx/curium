@@ -5,9 +5,10 @@ from .tokens import *
 class CuriumParser(Parser):
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
+
     @_("file_component", "file_component file")
     def file(self, v):
-        return (v[0],) if len(v) == 1 else (v[0], *v[1][1:])
+        return (v[0],) if len(v) == 1 else (v[0], *v[1])
 
     @_("function_def","statement","statements")
     def file_component(self,v):
