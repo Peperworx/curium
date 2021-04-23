@@ -136,7 +136,8 @@ class CuriumCompiler:
         for s in function[4][1:]:
             # Switch on each statement, generating code for each one
             if s[0] == "function_call": # If a function call
-                ...
+                # Call the function
+                out += [f"call ${s[1][2]}"]
             elif s[0] == "return": # If it is a return statement
                 # Return statements simply resolve the expression,
                 # And make sure the value is on the stack
