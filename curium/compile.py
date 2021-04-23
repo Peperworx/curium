@@ -4,195 +4,188 @@ starting_table = {
 }
 
 class CuriumCompiler:
-    def _retrieve_function_locals(self, func_tree):
+    def __init__(self):
+        self.type_info = {
+            "functions": [],
+            "variables": []
+        }
+
+    def _find_function_locals(self, func):
         """
-            Using the parse tree of a function, find all local variable definitions
+            Gets a list of all local variables in a function
         """
-        # Not implemented
+
+        # Not implemented yet
         return []
     
-    def _verify_function_signature(self, funcsig):
+    def _resolve_variable_scope(self, name, scope=None):
         """
-            Verifies the parsed function signature.
-        """
-        
-        # Confirm that name is of type name
-        assert funcsig[1][1] == 'name', 'function_is_not_name'
+            Returns the information of a variable found in a scope.
+            A scope can be the global scope (self.type_info)
+            or a local scope of a function.
 
+            Scope defaults to self.type_info
+        """
+
+        if not scope:
+            scope = self.type_info
+
+        for v in scope["variables"]:
+            if v["name"] == name:
+                return v
+        
+        return None
     
-    def _build_symbol_table(self, tree, typeinfo=starting_table):
+    def _determine_type_precedence(self, t1, t2):
         """
-            Builds type information from a parse tree
+            Takes two types, t1 and t2.
+            Returns a type that is created by the combination of the two types in a binop.
         """
 
-        # Iterate over each member of tree
-        for i in tree:
-            # If it is a function, add to function typeinfo
-            if i[0] == 'function':
-                
-                # Run verification
-                self._verify_function_signature(i)
+        # If they are not default types, return the first one
+        if (t1 not in ["f32","f64","i32","i64"] or
+             t2 not in ["f32","f64","i32","i64"]):
+            return t1
 
-                # Create table entry
-                entry = {
-                    "name": i[1][2],
-                    "args": i[2][1:] or [],
-                    "return": self._resolve_type(i[3][2] or "void"),
-                    "variables": self._retrieve_function_locals(i),
-                }
+        # Grab the size of each
+        t1size = int(t1[1:])
+        t2size = int(t2[1:])
 
-                # Add the table entry
-                typeinfo["functions"].append(entry)
-        return typeinfo
+        # Grab the type of each
+        t1type = t1[0] == "f"
+        t2type = t2[0] == "f"
 
-    def _resolve_type(self, typ):
+        # Select type
+        t3type = max(t1type,t2type)
         
-        r = "none"
-        if typ == "int":
-            r = "i32"
-        return r
+        # Select size
+        t3size = max(t1size, t2size)
 
-    def _funcgen(self, func):
+        return f"{['i','f'][t3type]}{str(t3size)}"
+
+    def _resolve_types(self, in_tree):
         """
-            Generates wasm code for a funcion
-        """
-
-        # Grab func into
-        finfo = None
-        for f in self.type_info["functions"]:
-            if f["name"] == func[1][2]:
-                finfo = f
-                break
-        if not finfo:
-            raise RuntimeError(f"Function {func[1][2]} not found in symbol table")
-
-        ret = f"(result {self._resolve_type(finfo['return'][2])})" if finfo["return"] != "none" else None
-
-        return f"(func ${finfo['name']} {ret if ret else ''} \n{self._statementsgen(func)})"
-
-    def _get_expr_result_type(self, expr, func=None):
-        """
-            Gets the resulting type of an expression
-            These types are determined by precedence 
-            (so if an operation has a and b as operands, the operand with the highest precedence is chosen)
-            Floats have a higher precedence than integers, and 64 bit values have a higher 
-            precedence than 32 bit numbers.
-            
-            So i32 + i64 will be i64
-            f32 + f64 will be f64
-            f64 + i32 will be f64
-            f32 + i64 will be f64
-        """
-        
-        if expr[0] == "literal":
-            # Handle code for literals
-
-            # If it is a name literal, return the type
-            if expr[1] == "name":
-                
-                
-                # Search in locals for the name
-                if func:
-                    f=None
-                    for f in self.type_info["functions"]:
-                        if f["name"] == function[1][2]:
-                            break
-                    for v in f["variables"]:
-                        if v["name"] == expr[1]:
-                            return v["type"]
-                # If We can not find in locals, search globals
-                for v in self.type_info["variables"]:
-                    if v["name"] == expr[1]:
-                        return v["type"]
-                # If this failed, return none
-                return None
-            elif expr[1] == "integer":
-
-                # If it is above 0xFFFFFFFF then it is 64 bit, if not, 32 bit
-                if expr[2] > 0xFFFFFFFF:
-                    return "i64"
-                else:
-                    return "i32"
-
-    def _generate_expression(self, expr, out:list[str] = []):
-        """
-            Generates WASM code for an expression
-        """
-        
-        if expr[0] == "literal":
-            # If it is a literal, just add to stack
-            if expr[1] == "integer":
-                out += [f"{self._get_expr_result_type(expr)}.constant {expr[2]}"]
-        
-        return out
-
-    def _statementsgen(self, function):
-        """
-            Generates WASM code by compiling a list of statements in a function
+            Stores type information in self.type_info
         """
 
-        out = []
-
-        for s in function[4][1:]:
-            # Switch on each statement, generating code for each one
-            if s[0] == "function_call": # If a function call
-                # Call the function
-                out += [f"call ${s[1][2]}"]
-            elif s[0] == "return": # If it is a return statement
-                # Return statements simply resolve the expression,
-                # And make sure the value is on the stack
-                
-                # Grab the type of the result
-                restype = self._get_expr_result_type(s[1])
-                
-                # Grab from typeinfo
-                f=None
-                for f in self.type_info["functions"]:
-                    if f["name"] == function[1][2]:
-                        break
-                if not f:
-                    raise Exception(f"Function {function[1][2]} Not found in type info")
-                # Get the size of the result type
-                ressize = int(restype[1:])
-                # get size of return type
-                retsize = int(f["return"][1:])
-                
-                # If the retsize is >= the ressize we are good to go
-                if retsize < ressize:
-                    raise Exception(f"Invalid return type for function {f['name']}")
-                
-                # If all good, lets generate the expression
-                out.extend(self._generate_expression(s[1],[]))
-                
-        
-        return '\n'.join(out+[""])
-
-    def _codegen(self, in_tree):
-        """
-            Generates wasm code
-        """
-        code = ["(module"]
-
+        # Iterate over
         for i in in_tree:
             
             if i[0] == 'function':
-                
-                # Generate function
-                code += [self._funcgen(i)]
-        
-        code += ")"
+                self.type_info["functions"] += [
+                    {
+                        "name":i[1][2],
+                        "args": i[2][1:],
+                        "return": i[3][2],
+                        "locals": self._find_function_locals(i)
+                    }
+                ]
+            else:
+                print(i)
+    
+    def _resolve_static_type(self, t):
+        """
+            Returns the WASM equivilent of a type
+        """
+        if t == "int":
+            return "i32"
 
-        return code
+    
+
+
+    def _codegen_expression(self, in_tree, scope, out: list = []):
+        """
+            Recursive function to generate WAT code for an expression tree
+            Requires a scope. Can be global
+        """
+
+        if in_tree[0] == "literal": # if a literal
+            if in_tree[1] == "integer":
+                # Determine the type of the integer:
+                
+                itype = "i32"
+                if in_tree[2] > 0xFFFFFFFF:
+                    itype = "i64"
+                
+                # generate constant expression
+                out += [f"{itype}.const {str(in_tree[2])}"]
+        elif in_tree[0] == "function_call":
+            # Very primitive function call
+            # TODO Replace this
+            out += [f"call ${in_tree[1][2]}"]
+        
+
+
+        return out
+    def _codegen_statement(self, in_tree, scope):
+        """
+            Generates WAT code for a statement.
+            Requires a scope, can be global.
+        """
+        out = []
+
+        # If it is a return
+        if in_tree[0] == 'return':
+            # Generate the expression
+            out += self._codegen_expression(in_tree[1][2],scope,[])
+        elif in_tree[0] == 'expr':
+            out += self._codegen_expression(in_tree[2],scope,[])
+
+            # If it is a statement expression, drop the output
+            if in_tree[1] == "statement":
+                out += ["drop"]
+        
+        return out
+
+    def _codegen_function(self, in_tree):
+        """
+            Generates WAT code for a function
+        """
+        
+        # Generate function prototype
+        proto = f"(func ${in_tree[1][2]} (result {self._resolve_static_type(in_tree[3][2])})"
+
+        # Default out
+        out = [proto]
+
+        # For each statement, generate code for that statement.
+        for s in in_tree[4][1:]:
+            out += self._codegen_statement(s, in_tree)
+
+        # Add ending paren of function
+        out += [")"]
+
+        return out
+    def _codegen(self, in_tree):
+        """
+            Uses input tree to generate WASM text
+        """
+
+        out = ["(module"]
+
+        # Now iterate over every part of the file, 
+        # generating code for each
+
+        for i in in_tree:
+            # If a function, generate function code
+            if i[0] == 'function':
+                out += self._codegen_function(i)
+
+        out += [")"]
+
+        return '\n'.join(out)
+
     def compile(self, in_tree):
         """
             Converts a parsed tree into web assembly
         """
-
-        # Build type information
-        self.type_info = self._build_symbol_table(in_tree)
         
-        # Generate code
+        # Resolve the types
+        self._resolve_types(in_tree)
+        
+        
+
+        # Begin codegen
         gen = self._codegen(in_tree)
-        
 
-        return '\n'.join(gen)
+        return gen

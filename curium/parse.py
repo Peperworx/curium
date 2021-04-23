@@ -32,11 +32,11 @@ class CuriumParser(Parser):
 
     @_("RETURN expr SEMICOLON")
     def statement(self, v):
-        return ("return", v[1])
+        return ("return", ('expr','inline',v[1]))
     
     @_("expr SEMICOLON")
     def statement(self,v):
-        return v[0]
+        return ('expr','statement',v[0])
 
     # Tuple
     @_("expr", "expr COMMA tuple")
