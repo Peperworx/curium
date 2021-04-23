@@ -6,10 +6,27 @@ class CuriumParser(Parser):
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
     debugfile = 'parser.out'
+
+    precedence = (
+        ('nonassoc',
+        
+            "RETURN",
+            "DEF",
+            "CHAR",
+            "UCHAR",
+            "SHORT",
+            "USHORT",
+            "INT",
+            "UINT",
+            "LONG",
+            "ULONG",
+            "FLOAT",
+            "DOUBLE"),
+    )
     
     @_("file_component", "file_component file")
     def file(self, v):
-        return (v[0],) if len(v) == 1 else (v[0], *v[1])
+        return (v[0],) if len(v) == 1 else (*v[0], *v[1])
 
     @_("function_def","statements")
     def file_component(self,v):
@@ -63,6 +80,8 @@ class CuriumParser(Parser):
     def expr(self,v):
         return v[0]
 
+    
+
     # Numbers
     @_("HEXIDECIMAL","OCTAL","BINARY","DECIMAL")
     def number(self,v):
@@ -86,7 +105,14 @@ class CuriumParser(Parser):
     # Names
     @_(
         "NAME",
-        "CHAR",
+        "type"
+        )
+    def name(self,v):
+        
+        
+        return ('literal', 'name', v[0])
+    
+    @_("CHAR",
         "UCHAR",
         "SHORT",
         "USHORT",
@@ -95,9 +121,8 @@ class CuriumParser(Parser):
         "LONG",
         "ULONG",
         "FLOAT",
-        "DOUBLE"
-        )
-    def name(self,v):
+        "DOUBLE")
+    def type(self,v):
         if v[0] in ["int","uint","short","ushort","char","uchar"]:
             v[0] = "i32"
         elif v[0] in ["long","ulong"]:
@@ -106,5 +131,4 @@ class CuriumParser(Parser):
             v[0] = "f32"
         elif v[0] == "double":
             v[0] = "f64"
-        
-        return ('literal', 'name', v[0])
+        return v[0]
