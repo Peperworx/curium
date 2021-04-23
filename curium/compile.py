@@ -83,13 +83,6 @@ class CuriumCompiler:
             else:
                 print(i)
     
-    def _resolve_static_type(self, t):
-        """
-            Returns the WASM equivilent of a type
-        """
-        if t == "int":
-            return "i32"
-
     
 
 
@@ -143,7 +136,7 @@ class CuriumCompiler:
         """
         
         # Generate function prototype
-        proto = f"(func ${in_tree[1][2]} (result {self._resolve_static_type(in_tree[3][2])})"
+        proto = f"(func ${in_tree[1][2]} (result {in_tree[3][2]})"
 
         # Default out
         out = [proto]
