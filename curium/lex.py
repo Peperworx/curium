@@ -39,7 +39,39 @@ class CuriumLexer(Lexer):
         BINARY,
         OCTAL,
         DECIMAL,
-        COMMA
+        COMMA,
+        ADD,
+        SUB,
+        DIV,
+        MUL,
+        MOD,
+        LT,
+        GT,
+        LTEQ,
+        GTEQ,
+        EQ,
+        NEQ,
+        ASSG,
+        ADD_ASSG,
+        SUB_ASSG,
+        MUL_ASSG,
+        DIV_ASSG,
+        MOD_ASSG,
+        BLS_ASSG,
+        BRS_ASSG,
+        BAND_ASSG,
+        BOR_ASSG,
+        BXOR_ASSG,
+        BAND,
+        BOR,
+        BXOR,
+        BLS,
+        BRS,
+        BNOT,
+        LAND,
+        LOR,
+        LNOT,
+
     }
     
     # We do not "ignore" whitespace. We simple make note of it, and move on
@@ -131,4 +163,51 @@ class CuriumLexer(Lexer):
     
     # Commas are used to delimit lists
     COMMA = r','
+    
+    
+
+    # Compairison
+    LT   = "<"
+    GT   = ">"
+    LTEQ = "<="
+    GTEQ = ">="
+    EQ   = "=="
+    NEQ  = "!="
+
+    # Assignment
+    ASSG      = "="
+    ADD_ASSG  = "\+="
+    SUB_ASSG  = "\-="
+    MUL_ASSG  = "\*="
+    DIV_ASSG  = "/="
+    MOD_ASSG  = "%="
+    BLS_ASSG  = "<<="
+    BRS_ASSG  = ">>="
+    BAND_ASSG = "&="
+    BOR_ASSG  = "\|="
+    BXOR_ASSG = "^="
+
+    # Basic arithmetic
+    ADD  = "\+"
+    SUB  = "\-"
+    MUL  = "\*"
+    DIV  = "/"
+    MOD  = "%"
+
+    # Bitwise Operators
+    BAND = "&"
+    BOR  = "\|"
+    BXOR = '\^'
+    BLS  = "<<"
+    BRS  = ">>"
+    BNOT = "~"
+
+    # Logical
+    LAND = "&&"
+    LOR  = "\|\|"
+    LNOT = "!"
+
+
+
+
     

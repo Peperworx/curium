@@ -6,11 +6,74 @@ class CuriumParser(Parser):
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
     
+    precedence = (
+        ('right', ASSG,
+        ADD_ASSG, SUB_ASSG,
+        MUL_ASSG, DIV_ASSG, MOD_ASSG,
+        BLS_ASSG, BRS_ASSG,
+        BAND_ASSG, BXOR_ASSG, BOR_ASSG),
+        ('left', 'COMMA')
+    )
+
+    # Basic expressions
+    @_("expr ADD expr",
+        "expr SUB expr",
+        "expr MUL expr",
+        "expr DIV expr",
+        "expr LT expr",
+        "expr GT expr",
+        "expr LTEQ expr",
+        "expr GTEQ expr",
+        "expr EQ expr",
+        "expr NEQ expr",
+        "expr BAND expr",
+        "expr BOR expr",
+        "expr BXOR expr",
+        "expr BLS expr",
+        "expr BRS expr",
+        "expr BNOT expr",
+        "expr LAND expr",
+        "expr LOR expr",
+        "expr LNOT expr")
+    def expr(self, v):
+        return ('binop',v[1],v[0],v[2])
     
+    # Assignment
+    @_("defined_type COLON type ASSG expr")
+    def declaration(self, v):
+        return ('decl-assg', v[3], v[0], v[2], v[4])
+
+    @_("defined_type COLON type")
+    def declaration(self, v):
+        return ('decl', v[0], v[2])
+
+    @_("defined_type assgop expr")
+    def assignment(self, v):
+        return ('assg', v[0], v[1], v[2])
+    
+    # Assignment operators
+    @_("ASSG",
+        "ADD_ASSG",
+        "SUB_ASSG",
+        "MUL_ASSG",
+        "DIV_ASSG",
+        "MOD_ASSG",
+        "BLS_ASSG",
+        "BRS_ASSG",
+        "BAND_ASSG",
+        "BOR_ASSG",
+        "BXOR_ASSG")
+    def assgop(self, v):
+        return v[0]
+
+    # Expressions should link to types
+    @_("type","literal")
+    def expr(self, v):
+        return v[0]
 
     # Integers
     @_("HEXIDECIMAL","OCTAL","BINARY","DECIMAL")
-    def type(self,v):
+    def literal(self,v):
         
         # Convert the integer
         if v[0].startswith("0x"):
@@ -28,15 +91,20 @@ class CuriumParser(Parser):
 
     # Strings
     @_("STRING")
-    def type(self, v):
+    def literal(self, v):
         return ('string', v[0])
 
     
     # Names
     @_("NAME")
-    def type(self, v):
+    def defined_type(self, v):
         return ('defined-type', v[0])
     
+    # Defined type should link to type
+    @_("defined_type")
+    def type(self, v):
+        return v[0]
+
     # Signed integers
     @_("INT","LONG")
     def type(self, v):
