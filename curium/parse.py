@@ -5,21 +5,42 @@ from .tokens import *
 class CuriumParser(Parser):
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
-    
+
+    # Parser out file
+    debugfile = 'parser.out'
+
+    # Operator precedences
     precedence = (
+        ('left', 'COMMA'),
         ('right', ASSG,
         ADD_ASSG, SUB_ASSG,
         MUL_ASSG, DIV_ASSG, MOD_ASSG,
         BLS_ASSG, BRS_ASSG,
         BAND_ASSG, BXOR_ASSG, BOR_ASSG),
-        ('left', 'COMMA')
+        ('left', LOR),
+        ('left', LAND),
+        ('left', BOR),
+        ('left', BXOR),
+        ('left', BAND),
+        ('left', EQ, NEQ),
+        ('left', LT, LTEQ, GT, GTEQ),
+        ('left', BLS, BRS),
+        ('left', ADD, SUB),
+        ('left', MUL, DIV, MOD),
+        ('right', LNOT, BNOT)
     )
+
+    # A statement
+    @_("expr","declaration")
+    def statement(self, v):
+        return ('statement', v[0])
 
     # Basic expressions
     @_("expr ADD expr",
         "expr SUB expr",
         "expr MUL expr",
         "expr DIV expr",
+        "expr MOD expr",
         "expr LT expr",
         "expr GT expr",
         "expr LTEQ expr",
@@ -38,6 +59,9 @@ class CuriumParser(Parser):
     def expr(self, v):
         return ('binop',v[1],v[0],v[2])
     
+    @_("LPAREN expr RPAREN")
+    def expr(self, v):
+        return v[1]
     # Assignment
     @_("defined_type COLON type ASSG expr")
     def declaration(self, v):
@@ -51,6 +75,11 @@ class CuriumParser(Parser):
     def assignment(self, v):
         return ('assg', v[0], v[1], v[2])
     
+    # Assignment is an expression
+    @_("assignment")
+    def expr(self ,v):
+        return v[0]
+
     # Assignment operators
     @_("ASSG",
         "ADD_ASSG",
@@ -67,13 +96,13 @@ class CuriumParser(Parser):
         return v[0]
 
     # Expressions should link to types
-    @_("type","literal")
+    @_("type")
     def expr(self, v):
         return v[0]
 
     # Integers
     @_("HEXIDECIMAL","OCTAL","BINARY","DECIMAL")
-    def literal(self,v):
+    def expr(self,v):
         
         # Convert the integer
         if v[0].startswith("0x"):
@@ -91,7 +120,7 @@ class CuriumParser(Parser):
 
     # Strings
     @_("STRING")
-    def literal(self, v):
+    def expr(self, v):
         return ('string', v[0])
 
     

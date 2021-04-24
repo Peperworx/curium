@@ -12,7 +12,6 @@ class CuriumLexer(Lexer):
         TAB,
         NEWLINE,
         NAME,
-        NUMBER,
         STRING,
         LPAREN,
         RPAREN,
@@ -22,10 +21,6 @@ class CuriumLexer(Lexer):
         RBRACK,
         ARROW,
         DEF,
-        CHAR,
-        UCHAR,
-        SHORT,
-        USHORT,
         INT,
         UINT,
         LONG,
@@ -106,12 +101,6 @@ class CuriumLexer(Lexer):
     NAME['def'] = DEF # For function definition
 
     # Integer and floating point datatype names
-    NAME['char'] = CHAR # Signed and unsigned char (8bit)
-    NAME['uchar'] = UCHAR
-
-    NAME['short'] = SHORT # Signed and unsigned short (16 bits)
-    NAME['ushort'] = USHORT
-
     NAME['int'] = INT # Signed and unsigned integer (32 bits)
     NAME['uint'] = UINT
 
@@ -166,13 +155,7 @@ class CuriumLexer(Lexer):
     
     
 
-    # Compairison
-    LT   = "<"
-    GT   = ">"
-    LTEQ = "<="
-    GTEQ = ">="
-    EQ   = "=="
-    NEQ  = "!="
+    
 
     # Assignment
     ASSG      = "="
@@ -208,6 +191,12 @@ class CuriumLexer(Lexer):
     LNOT = "!"
 
 
-
+    # Compairison
+    LT   = "<"
+    GT   = ">"
+    LTEQ = "<="
+    GTEQ = ">="
+    EQ   = "=="
+    NEQ  = "!="
 
     
