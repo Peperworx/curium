@@ -1,6 +1,8 @@
 from sly import Parser
 from . import lex as clex
 from .tokens import *
+from .error import *
+import sys
 
 # Shortcut variable for assignment operators
 assg_op = ["ASSG", "ADD_ASSG", "SUB_ASSG",
@@ -9,6 +11,9 @@ assg_op = ["ASSG", "ADD_ASSG", "SUB_ASSG",
     "BOR_ASSG", "BXOR_ASSG"]
 
 class CuriumParser(Parser):
+    def __init__(self, *args, **kwargs):
+        return Parser.__init__(self, *args, **kwargs)
+
     # Grab tokens from lexer
     tokens = clex.CuriumLexer.tokens
 
@@ -36,6 +41,12 @@ class CuriumParser(Parser):
         ('left', BNOT, LNOT)
     )
 
+    def func_in_type_tree(self, name):
+        for i in self.type_tree["functions"]:
+            if i["name"] == name:
+                return i
+        return None
+
     # File
     @_("file_component file")
     def file(self, v):
@@ -48,7 +59,7 @@ class CuriumParser(Parser):
     # Function definitions
     @_("DEF defined_type LPAREN arglist RPAREN ARROW type LBRACE function_body RBRACE")
     def file_component(self, v):
-        return ('func-def', v[1], v[3], v[8])
+        return ('func-def', v[1], v[6], v[3], v[8])
 
     @_("statements", "empty_statements")
     def function_body(self, v):
@@ -62,6 +73,10 @@ class CuriumParser(Parser):
     @_("defined")
     def arglist(self, v):
         return ('arglist', v[0])
+    
+    @_("")
+    def arglist(self, v):
+        return ('arglist',)
     
     # An empty statement list
     @_('')
@@ -209,3 +224,5 @@ class CuriumParser(Parser):
     @_("FLOAT","DOUBLE")
     def type(self,v):
         return ('standard-type', 'f32' if v[0] == 'float' else 'f64')
+
+    

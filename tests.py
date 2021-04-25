@@ -1,6 +1,7 @@
 from curium import lex as clex
 from curium import parse as cparse
 from curium import compile as ccompile
+from curium.error import *
 
 def strip_whitespace(inlex):
     """
@@ -63,6 +64,7 @@ if __name__ == '__main__':
     assert tolex == reconstructed, "Reconstructed does not match original"
 
     # Parse
+    error_handler = CuriumErrorHandler(tolex.split("\n"),lexer)
     parser = cparse.CuriumParser()
 
     print_pretty(parser.parse(strip_whitespace(lexer.tokenize(tolex))))

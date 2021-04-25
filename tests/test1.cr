@@ -1,9 +1,9 @@
-def main (i: int) -> int {
-    let a: int = i + 1;
+def main() -> int {
+    let a: int = 3 + 1;
     a += 1;
-    a &= somefunc();
+    a &= somefunc(a);
     
 }
-def somefunc (a: int) -> int {
-    return a;
+def somefunc(a: int) -> int {
+    return a * 2;
 }
