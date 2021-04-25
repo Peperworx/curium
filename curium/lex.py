@@ -21,6 +21,7 @@ class CuriumLexer(Lexer):
         RBRACK,
         ARROW,
         DEF,
+        LET,
         INT,
         UINT,
         LONG,
@@ -111,6 +112,8 @@ class CuriumLexer(Lexer):
     NAME['double'] = DOUBLE # Double precision floating point number (64 bits)
 
     NAME['return'] = RETURN # The return keyword
+
+    NAME['let'] = LET # The let keyword
 
     # Numbers come in different forms
 
