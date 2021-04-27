@@ -137,7 +137,8 @@ class CuriumParser(Parser):
         "expr BXOR expr",
         "expr BNOT expr",
         "expr LOR expr",
-        "expr LAND expr"
+        "expr LAND expr",
+        "expr LNOT expr"
         )
     def expr(self, v):
         return ('binop', v[1], v[0], v[2])
@@ -187,7 +188,7 @@ class CuriumParser(Parser):
             v[0] = int(v[0])
         
         # Return the node in the AST.
-        # This includes the webassembly type
+        # This includes the type
         return (f'{"i32.const" if v[0] <= 0xFFFFFFFF else "i64.const"}', v[0])
 
     # Strings
@@ -207,18 +208,41 @@ class CuriumParser(Parser):
         return v[0]
 
     # Signed integers
-    @_("INT","LONG")
+    @_("INT","LONG","SHORT","CHAR")
     def type(self, v):
-        return ('standard-type', 'i32' if v[0] == 'int' else 'i64', v[0], 'signed')
+        t = ""
+        if v[0] == "int":
+            t = "i32"
+        elif v[0] == "long":
+            t = "i64"
+        elif v[0] == "short":
+            t = "i16"
+        elif v[0] == "char":
+            t = "i8"
+
+        return ('standard-type', t, 'signed')
+    
+    
     
     # Unsigned integers
-    @_("UINT","ULONG")
+    @_("UINT","ULONG","USHORT","UCHAR")
     def type(self, v):
+        # Remove the U
+        v[0] = v[0][1:]
+
         # Grab the actual type
-        t = 'i32' if v[0][1:] == 'int' else 'i64'
+        t = ""
+        if v[0] == "int":
+            t = "i32"
+        elif v[0] == "long":
+            t = "i64"
+        elif v[0] == "short":
+            t = "i16"
+        elif v[0] == "char":
+            t = "i8"
 
         # Return
-        return ('standard-type', t, v[0], 'unsigned')
+        return ('standard-type', t, 'unsigned')
     
     # Floating point numbers
     @_("FLOAT","DOUBLE")

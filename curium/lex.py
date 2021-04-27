@@ -26,6 +26,10 @@ class CuriumLexer(Lexer):
         UINT,
         LONG,
         ULONG,
+        SHORT,
+        USHORT,
+        CHAR,
+        UCHAR,
         FLOAT,
         DOUBLE,
         RETURN,
@@ -107,6 +111,13 @@ class CuriumLexer(Lexer):
 
     NAME['long'] = LONG # Signed and unsigned long (64 bits)
     NAME['ulong'] = ULONG
+
+    NAME['short'] = SHORT # Signed and unsigned short (16 bits)
+    NAME['ushort'] = USHORT
+
+    NAME['char'] = CHAR # Signed and unsigned char (8 buts)
+    NAME['uchar'] = UCHAR 
+
 
     NAME['float'] = FLOAT # Floating point number (32 bits)
     NAME['double'] = DOUBLE # Double precision floating point number (64 bits)
